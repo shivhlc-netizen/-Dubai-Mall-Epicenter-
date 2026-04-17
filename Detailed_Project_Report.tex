@@ -1,0 +1,72 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\definecolor{gold}{HTML}{C9A052}
+\titleformat{\section}{\large\bfseries\color{gold}}{\thesection}{1em}{}
+
+\title{Detailed Project Report: The 7-Star Registration Experience \\ \large Design Thinking Case Study for The Dubai Mall Epicenter}
+\author{Shiv Shambhu Chouudhary}
+\date{April 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Abstract}
+This report details the redesign of the user registration and authentication system for "The Dubai Mall --- The Epicenter." Utilizing Design Thinking principles, we identified critical friction points in the initial signup flow and implemented a robust, secure, and visually premium solution that aligns with the brand's 7-star luxury positioning.
+
+\section{Problem Statement}
+In a digital ecosystem representing the world's most visited destination, the entry point (registration) must be as seamless as a VIP concierge service. The initial system suffered from vague error reporting, leading to user drop-off and brand erosion. Our goal was to eliminate this friction while maintaining strict data integrity and security.
+
+\section{Design Thinking Methodology}
+
+\subsection{Empathize}
+We analyzed user behavior in high-end retail applications. Users in this segment have a low tolerance for technical ambiguity. They expect a system that is not only secure but also intelligent enough to guide them through errors without frustration.
+
+\subsection{Define}
+The core problem was identified as "Technical Obscurity." Validation errors from the server (Zod schemas) were not being translated into human-readable, brand-consistent feedback.
+
+\subsection{Ideate}
+We brainstormed a solution that bridged the gap between strict backend requirements and a fluid frontend experience. The strategy included:
+\begin{itemize}
+    \item Mapping Zod error paths to localized UI messages.
+    \item Utilizing Framer Motion for non-intrusive error animations.
+    \item Implementing a "Concierge Error Handler" on the client-side.
+\end{itemize}
+
+\subsection{Prototype}
+The implementation involved:
+\begin{itemize}
+    \item \textbf{Frontend:} A React Client Component with state-aware validation.
+    \item \textbf{Backend:} A Next.js 14 API Route using \texttt{bcryptjs} for one-way hashing and \texttt{zod} for schema validation.
+    \item \textbf{Database:} MySQL InnoDB tables with unique indexing on the email field to prevent collisions.
+\end{itemize}
+
+\subsection{Test}
+Rigorous edge-case testing was performed, including:
+\begin{itemize}
+    \item SQL Injection attempts via the name field.
+    \item Duplicate registration attempts.
+    \item Input stress testing (extremely long strings).
+    \item Formatting validation for international email standards.
+\end{itemize}
+
+\section{Technical Specification}
+The final system utilizes:
+\begin{enumerate}
+    \item \textbf{Authentication:} NextAuth.js with JWT Strategy.
+    \item \textbf{Security:} Hashing with salt rounds = 12.
+    \item \textbf{UX:} Glass-morphism UI with CSS backdrop-filters.
+\end{enumerate}
+
+\section{Conclusion}
+The updated registration flow successfully provides a frictionless entry into the 7-star digital experience. By applying Design Thinking, we transformed a technical hurdle into a branded moment of clarity and prestige.
+
+\end{document}

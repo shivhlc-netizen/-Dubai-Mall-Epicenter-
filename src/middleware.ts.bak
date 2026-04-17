@@ -1,0 +1,43 @@
+import { withAuth } from 'next-auth/middleware';
+import { NextResponse } from 'next/server';
+
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token;
+    const { pathname } = req.nextUrl;
+
+    // Admin-only routes
+    if (
+      (pathname.startsWith('/admin') || pathname.startsWith('/api/users')) &&
+      token?.role !== 'admin'
+    ) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
+      return NextResponse.redirect(new URL('/login?error=unauthorized', req.url));
+    }
+
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        const { pathname } = req.nextUrl;
+        // Public paths that don't need auth
+        if (
+          pathname === '/login' ||
+          pathname.startsWith('/api/gallery') ||
+          pathname.startsWith('/api/auth') ||
+          !pathname.startsWith('/admin') && !pathname.startsWith('/api/users')
+        ) {
+          return true;
+        }
+        return !!token;
+      },
+    },
+  }
+);
+
+export const config = {
+  matcher: ['/admin/:path*', '/api/users/:path*'],
+};
