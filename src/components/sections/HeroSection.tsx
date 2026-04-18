@@ -1,8 +1,12 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Database, Plus } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import VibgyorCounter from '@/components/ui/VibgyorCounter';
+import CinematicAdmin from '@/components/admin/CinematicAdmin';
 
 const HERO_STATS = [
   { value: '100M+', label: 'Annual Visitors' },
@@ -10,7 +14,14 @@ const HERO_STATS = [
   { value: '#1', label: "UAE's Top Destination" },
 ];
 
-export default function HeroSection({ onScrollDown }: { onScrollDown: () => void }) {
+interface Props {
+  onScrollDown: () => void;
+  isManaging: boolean;
+  onToggleManage: () => void;
+}
+
+export default function HeroSection({ onScrollDown, isManaging, onToggleManage }: Props) {
+  const { data: session } = useSession();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -79,6 +90,16 @@ export default function HeroSection({ onScrollDown }: { onScrollDown: () => void
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/60 via-[#050505]/40 to-[#050505]" />
       </div>
 
+      {/* Cinematic Counter Bottom Right */}
+      <div className="absolute bottom-10 right-6 lg:right-10 z-20">
+        <VibgyorCounter />
+      </div>
+
+      {/* Cinematic Admin Floating Button */}
+      {session && (session.user.role === 'admin' || session.user.role === 'manager') && (
+        <CinematicAdmin isManaging={isManaging} onToggleManage={onToggleManage} />
+      )}
+
       {/* Grid overlay */}
       <div className="absolute inset-0 grid-overlay opacity-30" />
 
@@ -136,15 +157,25 @@ export default function HeroSection({ onScrollDown }: { onScrollDown: () => void
 
         {/* CTAs */}
         <motion.div variants={item} className="flex flex-wrap gap-4 justify-center">
-          <button onClick={onScrollDown} className="btn-gold animate-pulse-gold">
-            Explore the Experience
+          <button onClick={onScrollDown} className="btn-gold animate-pulse-gold group relative overflow-hidden">
+            <span className="relative z-10">Explore the Experience</span>
+            <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 skew-x-[-30deg]" />
           </button>
-          <button
-            onClick={() => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })}
-            className="btn-outline"
-          >
-            For Partners
-          </button>
+          {!session ? (
+            <Link 
+              href="/signup" 
+              className="px-8 py-4 bg-white/5 border border-white/10 text-white text-[11px] tracking-[0.2em] uppercase font-sans hover:bg-gold hover:text-black hover:border-gold transition-all duration-500 rounded-sm flex items-center gap-2 group"
+            >
+              Join the Epicenter <Plus size={14} className="group-hover:rotate-90 transition-transform" />
+            </Link>
+          ) : (
+            <button
+              onClick={() => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })}
+              className="btn-outline"
+            >
+              For Partners
+            </button>
+          )}
         </motion.div>
       </motion.div>
 

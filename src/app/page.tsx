@@ -5,10 +5,12 @@ import Navigation from '@/components/Navigation';
 import SectionDots from '@/components/ui/SectionDots';
 import HeroSection from '@/components/sections/HeroSection';
 import WhySection from '@/components/sections/WhySection';
+import LiveCounter from '@/components/ui/LiveCounter';
 import RetailSection from '@/components/sections/RetailSection';
 import LuxurySection from '@/components/sections/LuxurySection';
 import DiningSection from '@/components/sections/DiningSection';
 import AttractionsSection from '@/components/sections/AttractionsSection';
+import GallerySection from '@/components/sections/GallerySection';
 import EventsSection from '@/components/sections/EventsSection';
 import WowFactsSection from '@/components/sections/WowFactsSection';
 import EventsModule from '@/components/modules/EventsModule';
@@ -44,6 +46,11 @@ export default function Home() {
   }, [loaded]);
 
   const scrollTo = useCallback((id: string) => {
+    // If navigating to experience, redirect instead of scrolling
+    if (id === 'experience') {
+      window.location.href = '/experience';
+      return;
+    }
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
@@ -97,10 +104,14 @@ export default function Home() {
       <main>
         <HeroSection onScrollDown={scrollToNext} />
         <WhySection />
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+          <LiveCounter />
+        </div>
         <RetailSection onExploreLeasing={() => setOpenModule('leasing')} />
         <LuxurySection />
         <DiningSection />
         <AttractionsSection />
+        <GallerySection />
         <EventsSection
           onEventsModule={() => setOpenModule('events')}
           onSponsorModule={() => setOpenModule('sponsorship')}

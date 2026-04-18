@@ -20,7 +20,7 @@ interface Img {
 }
 interface DupGroup { hash: string; count: number; images: Img[]; }
 interface DedupSummary {
-  total: number; onDisk: number; orphaned: number;
+  total: number; onDisk: number; orphaned: number; ignored: number;
   uniqueFiles: number; duplicateFiles: number; extraCopies: number;
 }
 
@@ -280,6 +280,7 @@ function DedupTab() {
   const [groups, setGroups]       = useState<DupGroup[]>([]);
   const [orphans, setOrphans]     = useState<Img[]>([]);
   const [keepMap, setKeepMap]     = useState<Record<string, number>>({}); // hash→keepId
+  const [ignore, setIgnore]       = useState(''); // folder1, folder2
   const [removing, setRemoving]   = useState(false);
   const [cleaningOrphans, setCleaningOrphans] = useState(false);
   const [toast, setToast]         = useState('');
@@ -289,7 +290,7 @@ function DedupTab() {
   const scan = async () => {
     setScanning(true);
     setSummary(null); setGroups([]); setOrphans([]); setKeepMap({});
-    const r = await fetch('/api/admin/gallery-tools/dedup');
+    const r = await fetch(`/api/admin/gallery-tools/dedup?ignore=${encodeURIComponent(ignore)}`);
     const d = await r.json();
     setSummary(d.summary);
     setGroups(d.duplicateGroups || []);
@@ -344,23 +345,38 @@ function DedupTab() {
       </AnimatePresence>
 
       {/* Scan button */}
-      <div className="flex items-center gap-4 p-5 border border-white/5 bg-white/2">
-        <div className="flex-1">
-          <p className="text-white text-sm font-sans font-medium">Scan for Duplicate Images</p>
-          <p className="text-white/30 text-xs font-sans mt-0.5">Computes SHA-256 hash of each file on disk to find exact duplicates.</p>
+      <div className="flex flex-col gap-4 p-5 border border-white/5 bg-white/2">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <p className="text-white text-sm font-sans font-medium">Scan for Duplicate Images</p>
+            <p className="text-white/30 text-xs font-sans mt-0.5">Computes SHA-256 hash of each file on disk to find exact duplicates.</p>
+          </div>
+          <button onClick={scan} disabled={scanning}
+            className="flex items-center gap-2 px-5 py-2.5 bg-gold text-black text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-50">
+            {scanning ? <><Loader2 size={12} className="animate-spin"/> Scanning…</> : <><Layers size={12}/> Scan Now</>}
+          </button>
         </div>
-        <button onClick={scan} disabled={scanning}
-          className="flex items-center gap-2 px-5 py-2.5 bg-gold text-black text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-50">
-          {scanning ? <><Loader2 size={12} className="animate-spin"/> Scanning…</> : <><Layers size={12}/> Scan Now</>}
-        </button>
+
+        {/* Ignore folders input */}
+        <div className="flex items-center gap-3 border-t border-white/5 pt-4">
+          <label className="text-[10px] text-white/40 uppercase tracking-wider font-sans">Ignore Folders:</label>
+          <input 
+            type="text" 
+            value={ignore} 
+            onChange={e => setIgnore(e.target.value)}
+            placeholder="e.g. thumbnails, temp, avatars"
+            className="bg-white/5 border border-white/10 text-white/70 text-xs px-3 py-2 flex-1 focus:outline-none focus:border-gold/30 font-sans"
+          />
+        </div>
       </div>
 
       {summary && (
         <>
           {/* Summary cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             {[
               { label: 'Files on Disk', val: summary.onDisk,        col: 'text-white/60' },
+              { label: 'Ignored',       val: summary.ignored,       col: 'text-white/30' },
               { label: 'Unique Files',  val: summary.uniqueFiles,   col: 'text-green-400' },
               { label: 'Dup Groups',    val: summary.duplicateFiles, col: 'text-amber-400' },
               { label: 'Extra Copies',  val: summary.extraCopies,   col: 'text-red-400' },

@@ -1,18 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { execute, queryOne } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+
+const resetSchema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Must contain an uppercase letter')
+    .regex(/[0-9]/, 'Must contain a number')
+    .regex(/[^a-zA-Z0-9]/, 'Must contain a special character'),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { token, password } = await req.json();
-
-    if (!token || !password) {
-      return NextResponse.json({ error: 'Token and password are required' }, { status: 400 });
+    const body = await req.json();
+    const parsed = resetSchema.safeParse(body);
+    if (!parsed.success) {
+      const msg = parsed.error.issues[0]?.message || 'Invalid input';
+      return NextResponse.json({ error: msg }, { status: 400 });
     }
-
-    if (password.length < 8) {
-      return NextResponse.json({ error: 'Password must be at least 8 characters long' }, { status: 400 });
-    }
+    const { token, password } = parsed.data;
 
     const user = await queryOne<{ id: number }>(
       'SELECT id FROM users WHERE reset_password_token = ? AND reset_password_expires > NOW() LIMIT 1',

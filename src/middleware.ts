@@ -37,8 +37,10 @@ export default withAuth(
           pathname === '/experience' ||
           pathname.startsWith('/reset-password') ||
           pathname.startsWith('/api/auth') ||
-          pathname.startsWith('/api/gallery') || // Semi-public
-          pathname.startsWith('/api/experiences') // Semi-public
+          pathname.startsWith('/api/gallery') ||
+          pathname.startsWith('/api/experiences') ||
+          pathname.startsWith('/api/stats/visits') ||   // LiveCounter on main page
+          pathname.startsWith('/api/stats/log-visit')   // Visit tracking (public)
         ) {
           return true;
         }
@@ -52,9 +54,9 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/admin/:path*', 
+    '/admin/:path*',
     '/api/admin/:path*',
-    '/api/stats/:path*',
+    // /api/stats/* routes handle their own auth via requireManager() — no middleware needed
     '/api/users/:path*',
   ],
 };

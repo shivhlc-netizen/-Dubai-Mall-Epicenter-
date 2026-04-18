@@ -5,13 +5,14 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
 const createSchema = z.object({
-  name:     z.string().min(2).max(100),
-  email:    z.string().email().max(255),
-  password: z.string().min(8).max(128)
+  name:       z.string().min(2).max(100),
+  email:      z.string().email().max(255),
+  password:   z.string().min(8).max(128)
     .regex(/[A-Z]/, 'Must contain uppercase')
     .regex(/[0-9]/, 'Must contain a number')
     .regex(/[^a-zA-Z0-9]/, 'Must contain a special character'),
-  role:     z.enum(['admin', 'user']).default('user'),
+  role:       z.enum(['admin', 'user']).default('user'),
+  api_budget: z.number().int().min(0).max(1000000).optional(),
 });
 
 // GET /api/users — admin only
@@ -20,7 +21,8 @@ export async function GET(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const users = await query(
-    `SELECT id, name, email, role, active, last_login, created_at
+    `SELECT id, name, email, role, active, last_login, created_at, 
+            api_budget, api_used, last_api_request
      FROM users ORDER BY created_at DESC`
   );
   return NextResponse.json(users);
@@ -40,8 +42,8 @@ export async function POST(req: NextRequest) {
 
     const hash   = await bcrypt.hash(data.password, 12);
     const result = await execute(
-      'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)',
-      [data.name, data.email.toLowerCase(), hash, data.role]
+      'INSERT INTO users (name, email, password_hash, role, api_budget) VALUES (?, ?, ?, ?, ?)',
+      [data.name, data.email.toLowerCase(), hash, data.role, data.api_budget || 1000]
     );
 
     return NextResponse.json({ id: result.insertId, message: 'User created' }, { status: 201 });

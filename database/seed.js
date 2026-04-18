@@ -89,13 +89,21 @@ async function seed() {
   );
   console.log(`✓ Admin user: ${adminEmail}  /  password: ${adminPassword}`);
 
-  // Sample regular user
+  // Manager user
+  const managerHash = await bcrypt.hash('Manager@Dubai2025!', 12);
+  await conn.execute(
+    'INSERT IGNORE INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)',
+    ['Gallery Manager', 'manager@dubaimall.ae', managerHash, 'manager']
+  );
+  console.log('✓ Manager: manager@dubaimall.ae  /  password: Manager@Dubai2025!');
+
+  // Regular user
   const userHash = await bcrypt.hash('User@Dubai2025!', 10);
   await conn.execute(
     'INSERT IGNORE INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)',
-    ['Gallery Manager', 'user5@dubaimall.ae', userHash, 'user']
+    ['Dubai Guest', 'guest@dubaimall.ae', userHash, 'user']
   );
-  console.log('✓ User5: user5@dubaimall.ae  /  password: User@Dubai2025!');
+  console.log('✓ Guest: guest@dubaimall.ae  /  password: User@Dubai2025!');
 
   // Gallery images
   if (!fs.existsSync(GALLERY_DIR)) {

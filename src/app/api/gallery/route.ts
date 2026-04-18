@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       where += ' AND gi.featured = 1';
     }
 
-    const images = await query(
+    const imagesPromise = query(
       `SELECT gi.id, gi.filename, gi.path, gi.title, gi.description, gi.alt_text,
               gi.story, gi.emotional_hook, gi.shift_style, gi.featured,
               gi.sort_order, gi.active, gi.visual_config, gi.story_id,
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       params
     );
 
-    const [{ total }] = await query<{ total: number }>(
+    const totalPromise = query<{ total: number }>(
       `SELECT COUNT(*) AS total
        FROM   gallery_images gi
        LEFT JOIN gallery_categories gc ON gi.category_id = gc.id
@@ -56,9 +56,17 @@ export async function GET(req: NextRequest) {
       params
     );
 
-    const categories = await query(
+    const categoriesPromise = query(
       'SELECT id, name, slug FROM gallery_categories ORDER BY sort_order ASC'
     );
+
+    const [images, totalResults, categories] = await Promise.all([
+      imagesPromise,
+      totalPromise,
+      categoriesPromise
+    ]);
+
+    const { total } = totalResults[0] || { total: 0 };
 
     return NextResponse.json({ images, categories, total, page, limit });
   } catch (err: any) {
@@ -76,9 +84,11 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const items = z.array(z.object({ id: z.number(), sort_order: z.number() })).parse(body);
 
-    for (const { id, sort_order } of items) {
-      await query('UPDATE gallery_images SET sort_order = ? WHERE id = ?', [sort_order, id]);
-    }
+    await Promise.all(
+      items.map(({ id, sort_order }) =>
+        query('UPDATE gallery_images SET sort_order = ? WHERE id = ?', [sort_order, id])
+      )
+    );
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
@@ -99,12 +109,14 @@ export async function POST(req: NextRequest) {
       }))
     }).parse(body);
 
-    for (const { id, visual_config } of items) {
-      await query(
-        'UPDATE gallery_images SET visual_config = ? WHERE id = ?',
-        [JSON.stringify(visual_config), id]
-      );
-    }
+    await Promise.all(
+      items.map(({ id, visual_config }) =>
+        query(
+          'UPDATE gallery_images SET visual_config = ? WHERE id = ?',
+          [JSON.stringify(visual_config), id]
+        )
+      )
+    );
     return NextResponse.json({ ok: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 400 });

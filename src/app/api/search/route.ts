@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { rateLimit } from '@/lib/rateLimit';
 
 export async function GET(req: NextRequest) {
   try {
+    const ip = (req.headers.get('x-forwarded-for') || '127.0.0.1').split(',')[0].trim();
+    const { allowed } = rateLimit(`search:${ip}`, 30, 60_000);
+    if (!allowed) return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+
     const { searchParams } = req.nextUrl;
     const q = searchParams.get('q');
 

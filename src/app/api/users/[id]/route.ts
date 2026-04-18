@@ -5,11 +5,12 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
 const patchSchema = z.object({
-  name:     z.string().min(2).max(100).optional(),
-  email:    z.string().email().max(255).optional(),
-  role:     z.enum(['admin', 'user']).optional(),
-  active:   z.boolean().optional(),
-  password: z.string().min(8).max(128)
+  name:       z.string().min(2).max(100).optional(),
+  email:      z.string().email().max(255).optional(),
+  role:       z.enum(['admin', 'user']).optional(),
+  active:     z.boolean().optional(),
+  api_budget: z.number().int().min(0).max(1000000).optional(),
+  password:   z.string().min(8).max(128)
     .regex(/[A-Z]/).regex(/[0-9]/).regex(/[^a-zA-Z0-9]/)
     .optional(),
 });
@@ -42,11 +43,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const sets: string[]   = [];
     const vals: unknown[]  = [];
 
-    if (data.name     !== undefined) { sets.push('name = ?');          vals.push(data.name); }
-    if (data.email    !== undefined) { sets.push('email = ?');         vals.push(data.email.toLowerCase()); }
-    if (data.role     !== undefined) { sets.push('role = ?');          vals.push(data.role); }
-    if (data.active   !== undefined) { sets.push('active = ?');        vals.push(data.active ? 1 : 0); }
-    if (data.password !== undefined) {
+    if (data.name       !== undefined) { sets.push('name = ?');          vals.push(data.name); }
+    if (data.email      !== undefined) { sets.push('email = ?');         vals.push(data.email.toLowerCase()); }
+    if (data.role       !== undefined) { sets.push('role = ?');          vals.push(data.role); }
+    if (data.active     !== undefined) { sets.push('active = ?');        vals.push(data.active ? 1 : 0); }
+    if (data.api_budget !== undefined) { sets.push('api_budget = ?');    vals.push(data.api_budget); }
+    if (data.password   !== undefined) {
       const hash = await bcrypt.hash(data.password, 12);
       sets.push('password_hash = ?');
       vals.push(hash);
@@ -58,7 +60,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     await execute(`UPDATE users SET ${sets.join(', ')} WHERE id = ?`, vals);
 
     const updated = await query(
-      'SELECT id, name, email, role, active, last_login, created_at FROM users WHERE id = ?',
+      `SELECT id, name, email, role, active, last_login, created_at, 
+              api_budget, api_used, last_api_request 
+       FROM users WHERE id = ?`,
       [id]
     );
     return NextResponse.json(updated[0]);

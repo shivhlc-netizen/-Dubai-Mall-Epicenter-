@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     if (view === 'featured') { where += ' AND gi.featured = 1'; }
     if (view === 'event')    { where += ' AND gi.shift_style = "event"'; }
 
-    const images = await query(
+    const imagesPromise = query(
       `SELECT gi.id, gi.filename, gi.path, gi.title, gi.emotional_hook, gi.shift_style,
               gi.active, gi.featured, gi.sort_order, gi.media_type,
               gc.name AS category_name, gc.slug AS category_slug
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
       params
     );
 
-    const [stats] = await query<{ total: number; active: number; featured: number; hidden: number }>(
+    const statsPromise = query<{ total: number; active: number; featured: number; hidden: number }>(
       `SELECT COUNT(*) AS total,
               SUM(active=1) AS active,
               SUM(featured=1) AS featured,
@@ -48,12 +48,20 @@ export async function GET(req: NextRequest) {
        FROM gallery_images`
     );
 
-    const categories = await query(
+    const categoriesPromise = query(
       `SELECT gc.id, gc.name, gc.slug, COUNT(gi.id) AS count
        FROM gallery_categories gc
        LEFT JOIN gallery_images gi ON gi.category_id = gc.id
        GROUP BY gc.id ORDER BY gc.id`
     );
+
+    const [images, statsResults, categories] = await Promise.all([
+      imagesPromise,
+      statsPromise,
+      categoriesPromise
+    ]);
+
+    const stats = statsResults[0] || { total: 0, active: 0, featured: 0, hidden: 0 };
 
     return NextResponse.json({ images, stats, categories });
   } catch (err: any) {

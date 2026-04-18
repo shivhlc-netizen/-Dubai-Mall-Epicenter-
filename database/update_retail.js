@@ -38,7 +38,7 @@ async function updateSchema() {
     ) ENGINE=InnoDB;
 
     INSERT IGNORE INTO retail_shops (name, category, needs_catered, website_url, is_featured) VALUES
-    ('Apple Store', 'Electronics', 'Premium tech, iPhones, MacBooks, creative professionals', 'https://www.apple.com/ae/retail/thedubaimall/', 1),
+    ('Apple Store', 'Electronics', 'Premium tech, iPhones, MacBooks, creative professionals', 'https://www.apple.com/', 1),
     ('Zara', 'Fashion', 'Trendy fast fashion, affordable luxury, latest styles', 'https://www.zara.com/ae/', 1),
     ('Sephora', 'Beauty', 'High-end cosmetics, skincare, perfumes, makeup artists', 'https://www.sephora.ae/', 1),
     ('Nike', 'Sports', 'Athletic footwear, training gear, professional sports apparel', 'https://www.nike.com/ae/', 1),

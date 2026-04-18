@@ -1,135 +1,98 @@
 @echo off
 setlocal enabledelayedexpansion
-title Dubai Mall — Setup
-cd /d "%~dp0"
+title THE DUBAI MALL — SETUP WIZARD
+color 0B
 
 echo.
-echo  ==========================================
+echo  ==========================================================================
 echo   THE DUBAI MALL — THE EPICENTER
-echo   Full-Stack Setup Script (Port 5001)
-echo  ==========================================
+echo   7-Star Architectural Setup & Governance Script
+echo  ==========================================================================
 echo.
 
-:: ── 1. Check Node.js ────────────────────────────────────────────────────────
-where node >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] Node.js not found. Download from https://nodejs.org/
-    pause & exit /b 1
-)
-for /f "tokens=*" %%v in ('node -v') do set NODE_VER=%%v
-echo [OK] Node.js !NODE_VER!
+:: ── 1. SYSTEM CHECKS ────────────────────────────────────────────────────────
+echo [SYSTEM] Verifying Node.js environment...
+where node >nul 2>&1 || (echo [ERR] Node.js missing! & pause & exit /b 1)
+where npm >nul 2>&1 || (echo [ERR] npm missing! & pause & exit /b 1)
+echo [OK] Node.js & npm detected.
 
-:: ── 2. Check npm ────────────────────────────────────────────────────────────
-where npm >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] npm not found.
-    pause & exit /b 1
-)
-echo [OK] npm found
-
-:: ── 3. Check MySQL client ────────────────────────────────────────────────────
-where mysql >nul 2>&1
-if errorlevel 1 (
-    echo [INFO] mysql CLI not in PATH (using Node.js for DB ops instead)
-) else (
-    echo [OK] mysql CLI found
-)
-
-:: ── 4. Create .env if missing ────────────────────────────────────────────────
+:: ── 2. CONFIGURATION ────────────────────────────────────────────────────────
+echo [ENV] Checking configuration files...
 if not exist ".env" (
     if exist ".env.example" (
         copy ".env.example" ".env" >nul
-        echo [OK] .env created from .env.example — edit credentials if needed
+        echo [OK] .env generated from template.
     ) else (
-        echo [WARN] No .env or .env.example found
-    )
-) else (
-    echo [OK] .env already exists
-)
-
-:: ── 5. Install npm dependencies ──────────────────────────────────────────────
-echo.
-echo [SETUP] Installing npm dependencies...
-call npm install --legacy-peer-deps
-if errorlevel 1 (
-    echo [ERROR] npm install failed
-    pause & exit /b 1
-)
-echo [OK] Dependencies installed
-
-:: ── 6. Copy images to public/gallery ─────────────────────────────────────────
-echo.
-echo [SETUP] Copying Dubai Mall images to public\gallery\...
-if not exist "public\gallery" mkdir "public\gallery"
-
-set COUNT=0
-if exist "image\" (
-    for %%e in (jpg png webp jpeg gif) do (
-        for %%f in ("image\*.%%e") do (
-            if exist "%%f" (
-                copy "%%f" "public\gallery\" /Y >nul 2>&1
-                set /a COUNT+=1
-            )
-        )
-    )
-)
-if exist "image\dm\Dubai M\" (
-    for %%e in (jpg png webp jpeg gif) do (
-        for %%f in ("image\dm\Dubai M\*.%%e") do (
-            if exist "%%f" (
-                copy "%%f" "public\gallery\" /Y >nul 2>&1
-                set /a COUNT+=1
-            )
-        )
-    )
-)
-echo [OK] !COUNT! images copied to public\gallery\
-
-:: ── 7. Setup Database ─────────────────────────────────────────────────────────
-echo.
-set /p RUN_DB=Setup database now? (Schema + Seed) [y/N]:
-if /i "!RUN_DB!"=="y" (
-    echo [INFO] Running database initialization...
-    node database/init-db.js
-    if errorlevel 1 (
-        echo [ERROR] DB init failed — check MySQL is running and .env credentials are correct.
+        echo [ERR] Critical: .env.example missing!
         pause & exit /b 1
     )
-    echo [INFO] Seeding database...
-    node database/seed.js
+) else (
+    echo [OK] .env already exists.
+)
+
+:: ── 3. INSTALLATION ─────────────────────────────────────────────────────────
+if not exist "node_modules\" (
+    echo [SETUP] Installing 7-star dependencies...
+    call npm install --legacy-peer-deps
     if errorlevel 1 (
-        echo [WARN] Seed had warnings — DB may still be usable.
-    ) else (
-        echo [OK] Database fully setup and seeded.
+        echo [ERR] npm install failed!
+        pause & exit /b 1
     )
 ) else (
-    echo [SKIP] Database setup skipped.
+    echo [OK] Dependencies ready.
 )
 
-:: ── 8. Sync gallery images to DB ──────────────────────────────────────────────
+:: ── 4. DATABASE & GOVERNANCE ────────────────────────────────────────────────
 echo.
-echo [INFO] Gallery images will be auto-synced on first run via /api/gallery/sync
-
-:: ── 9. Start dev server ────────────────────────────────────────────────────────
-echo.
-echo  ==========================================
-echo   SETUP COMPLETE
-echo  ==========================================
-echo.
-echo   Site URL  : http://localhost:5001
-echo   Login URL : http://localhost:5001/login
-echo   Admin URL : http://localhost:5001/admin
-echo.
-echo   Default Admin : (set ADMIN_EMAIL in .env)
-echo   Password      : (set ADMIN_PASSWORD in .env)
-echo.
-set /p START_DEV=Start development server on Port 5001? [y/N]:
-if /i "!START_DEV!"=="y" (
-    echo [INFO] Starting server on http://localhost:5001 ...
-    echo.
-    start "" cmd /c "timeout /t 5 >nul && start http://localhost:5001"
-    call npm run dev -- -p 5001
+set /p DB_OP="Full Database Reset? (Schema + Seed + API Budgets) [y/N]: "
+if /i "!DB_OP!"=="y" (
+    echo [DB] Establishing Schema...
+    node database/init-db.js
+    if errorlevel 1 (
+        echo [ERR] DB Initialization failed! Check MySQL service.
+        pause & exit /b 1
+    )
+    echo [DB] Seeding Core Data (Users, Categories, Images)...
+    node database/seed.js
+    
+    echo [DB] Applying API Governance Migrations...
+    :: Inline temporary migration for budgets if needed
+    node -e "const mysql=require('mysql2/promise');const fs=require('fs');async function m(){const env={};if(fs.existsSync('.env')){fs.readFileSync('.env','utf8').split('\n').forEach(l=>{const [k,...v]=l.split('=');if(k&&!k.startsWith('#')&&v.length)env[k.trim()]=v.join('=').trim().replace(/^['\"]|['\"]$/g,'');});}const p=mysql.createPool({host:env.DB_HOST||'127.0.0.1',port:parseInt(env.DB_PORT||'3306'),user:env.DB_USER||'root',password:env.DB_PASSWORD||'',database:env.DB_NAME||'dubai_mall'});try{const [c]=await p.execute('SHOW COLUMNS FROM users');const n=c.map(x=>x.Field);if(!n.includes('api_budget')) await p.execute('ALTER TABLE users ADD COLUMN api_budget INT NOT NULL DEFAULT 1000');if(!n.includes('api_used')) await p.execute('ALTER TABLE users ADD COLUMN api_used INT NOT NULL DEFAULT 0');if(!n.includes('last_api_request')) await p.execute('ALTER TABLE users ADD COLUMN last_api_request TIMESTAMP NULL');console.log('✓ Governance active.');}catch(e){console.error('✗ Migration failed:',e.message);}finally{await p.end();}}m();"
 )
 
-pause
+:: ── 5. ASSET SYNC ──────────────────────────────────────────────────────────
+echo.
+echo [IMAGE] Synchronizing high-definition assets...
+if not exist "public\gallery\" mkdir "public\gallery\"
+if exist "image\" (
+    xcopy /y /q "image\*.jpg" "public\gallery\" >nul 2>&1
+    xcopy /y /q "image\*.png" "public\gallery\" >nul 2>&1
+    xcopy /y /q "image\*.webp" "public\gallery\" >nul 2>&1
+)
+echo [OK] Image synchronization complete.
+
+:: ── 6. SUMMARY ──────────────────────────────────────────────────────────────
+echo.
+echo  ==========================================================================
+echo   SETUP COMPLETE — PROJECT STABILIZED
+echo  ==========================================================================
+echo.
+echo   - Site URL:  http://localhost:5001
+echo   - Admin URL: http://localhost:5001/admin
+echo.
+echo   TEST CREDENTIALS:
+echo   - Admin: admin@dubaimall.ae / Admin@Dubai2025!
+echo   - Guest: guest@dubaimall.ae / User@Dubai2025!
+echo.
+echo  ==========================================================================
+echo.
+
+set /p LAUNCH="Start Epicenter now? (y/N): "
+if /i "!LAUNCH!"=="y" (
+    start START_DUBAI_MALL.bat
+) else (
+    echo [EXIT] Run START_DUBAI_MALL.bat when ready.
+    pause
+)
+
 endlocal

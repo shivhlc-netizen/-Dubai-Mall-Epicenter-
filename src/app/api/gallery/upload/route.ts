@@ -18,9 +18,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
+    const ALLOWED_TYPES: Record<string, 'image' | 'video'> = {
+      'image/jpeg': 'image', 'image/png': 'image', 'image/webp': 'image',
+      'image/gif': 'image', 'image/avif': 'image',
+      'video/mp4': 'video', 'video/webm': 'video', 'video/quicktime': 'video',
+    };
+    const mediaType = ALLOWED_TYPES[file.type];
+    if (!mediaType) {
+      return NextResponse.json({ error: 'File type not allowed' }, { status: 415 });
+    }
+
+    const MAX_SIZE = mediaType === 'video' ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      return NextResponse.json({ error: 'File too large' }, { status: 413 });
+    }
+
     const buffer = Buffer.from(await file.arrayBuffer());
-    const isVideo = file.type.startsWith('video/');
-    const mediaType = isVideo ? 'video' : 'image';
     
     // Calculate fingerprint to prevent duplicates
     const fingerprint = crypto.createHash('sha256').update(buffer).digest('hex');
@@ -39,7 +52,8 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+    const safeName = path.basename(file.name).replace(/[^a-zA-Z0-9._-]/g, '_');
+    const filename = `${Date.now()}-${safeName}`;
     const uploadDir = path.join(process.cwd(), 'public/gallery');
     
     if (!fs.existsSync(uploadDir)) {

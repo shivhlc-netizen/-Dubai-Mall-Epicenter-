@@ -1,0 +1,43 @@
+name: 7-Star LMS Gated Build & Push
+
+on:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build LMS Image
+        run: |
+          docker build \
+            --target runner \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest .
+
+      - name: LMS Gating (Metadata Verification)
+        run: |
+          # Verify the 7-Star labels we defined in the Dockerfile
+          TIER=$(docker inspect --format='{{index .Config.Labels "tier"}}' ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest)
+          PROJECT=$(docker inspect --format='{{index .Config.Labels "project"}}' ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest)
+          
+          echo "Detected Tier: $TIER"
+          echo "Detected Project: $PROJECT"
+          
+          if [ "$TIER" == "7-Star" ] && [ "$PROJECT" == "Dubai Seven Wonders" ]; then
+            echo "✅ LMS Gate Passed: 7-Star Integrity Verified"
+          else
+            echo "❌ LMS Gate Failed: Metadata Mismatch"
+            exit 1
+          fi
+
+      - name: Push to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest

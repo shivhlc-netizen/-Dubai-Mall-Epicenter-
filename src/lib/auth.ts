@@ -45,22 +45,15 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        console.log('Login attempt for:', credentials?.email);
         const parsed = loginSchema.safeParse(credentials);
-        if (!parsed.success) {
-          console.log('Validation failed:', parsed.error.issues);
-          return null;
-        }
+        if (!parsed.success) return null;
 
         const user = await queryOne<DBUser>(
           'SELECT id, name, email, password_hash, role, active, is_premium, email_verified_at, admin_preferences, failed_attempts, lock_until FROM users WHERE email = ? LIMIT 1',
           [parsed.data.email.toLowerCase()]
         );
 
-        if (!user) {
-          console.log('User not found in DB:', parsed.data.email);
-          return null;
-        }
+        if (!user) return null;
 
         // Check for lockout
         if (user.lock_until && new Date(user.lock_until) > new Date()) {
@@ -69,7 +62,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (!user.active || !user.email_verified_at) {
-          console.log('User is inactive or unverified');
           throw new Error('Please verify your email before logging in.');
         }
 

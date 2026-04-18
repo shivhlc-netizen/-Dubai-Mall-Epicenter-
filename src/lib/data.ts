@@ -5,6 +5,8 @@ export const SECTIONS = [
   { id: 'luxury', label: 'Luxury' },
   { id: 'dining', label: 'Dining' },
   { id: 'attractions', label: 'Attractions' },
+  { id: 'gallery', label: 'Gallery' },
+  { id: 'experience', label: 'Scrapbook' },
   { id: 'events', label: 'Events' },
   { id: 'wow', label: '5 Facts' },
 ];

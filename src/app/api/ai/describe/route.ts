@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { recordUsage } from '@/lib/aiUsageTracker';
+import { checkAndDeducedBudget, getRemainingBudget } from '@/lib/ai-budget';
 
 // In-memory RPM limiter for Gemini
 const rateStore = { count: 0, resetAt: Date.now() + 60_000 };
@@ -59,7 +60,7 @@ async function tryGemini(
     const usage = result.response.usageMetadata;
     const inputTokens  = usage?.promptTokenCount ?? 0;
     const outputTokens = usage?.candidatesTokenCount ?? 0;
-    await recordUsage({ provider: 'gemini', inputTokens, outputTokens, totalTokens: inputTokens + outputTokens, success: true });
+    await recordUsage({ provider: 'gemini', model: 'gemini-1.5-flash', endpoint: 'ai/describe', inputTokens, outputTokens, totalTokens: inputTokens + outputTokens, success: true });
 
     const text = result.response.text().trim();
     const match = text.match(/\{[\s\S]*\}/);
@@ -69,7 +70,7 @@ async function tryGemini(
   } catch (err: any) {
     geminiState.lastFailAt = Date.now();
     const is429 = err?.status === 429;
-    await recordUsage({ provider: 'gemini', inputTokens: 0, outputTokens: 0, totalTokens: 0, success: false, errorType: is429 ? '429' : 'error' });
+    await recordUsage({ provider: 'gemini', model: 'gemini-1.5-flash', endpoint: 'ai/describe', inputTokens: 0, outputTokens: 0, totalTokens: 0, success: false, errorType: is429 ? '429' : 'error' });
     return {
       error: err.message || 'Gemini error',
       waitSeconds: is429 ? 60 : undefined,
@@ -80,6 +81,15 @@ async function tryGemini(
 export async function POST(req: NextRequest) {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
+  // ── Budget Check ──────────────────────────────────────────────────────────
+  const budget = await checkAndDeducedBudget(parseInt(session.user.id, 10), 100);
+  if (!budget.allowed) {
+    return NextResponse.json({ 
+      error: 'out_of_budget', 
+      message: budget.error 
+    }, { status: 403 });
+  }
 
   const body = await req.json();
   const { imageBase64, mimeType } = body;
@@ -115,7 +125,10 @@ export async function GET(req: NextRequest) {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
+  const remaining = await getRemainingBudget(parseInt(session.user.id, 10));
+
   return NextResponse.json({
+    remaining_budget: remaining,
     gemini: {
       lastAliveAt: geminiState.lastAliveAt ? new Date(geminiState.lastAliveAt).toISOString() : null,
       lastFailAt: geminiState.lastFailAt ? new Date(geminiState.lastFailAt).toISOString() : null,

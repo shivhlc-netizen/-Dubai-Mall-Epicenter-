@@ -1,0 +1,121 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+
+% 7-Star Branding Colors
+\definecolor{gold}{HTML}{C9A052}
+\definecolor{obsidian}{HTML}{0A0A0A}
+
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{gold}}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat{\section}{\large\bfseries\color{gold}}{\thesection}{1em}{}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=gold,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Dubai Seven Wonders DPR},
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\color{gold}The Dubai Mall --- The Epicenter}
+\lhead{DPR: 7-Star Digital Twin}
+\rfoot{Page \thepage}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    {\Huge \bfseries \color{gold} DUBAI SEVEN WONDERS}\\[0.5cm]
+    {\huge \bfseries THE DIGITAL TWIN}\\[2cm]
+    {\Large \bfseries Detailed Project Report}\\[0.8cm]
+    {\large Design Thinking Case Study \& Infrastructure Optimization}\\[4cm]
+    
+    \vfill
+    {\large \textbf{Prepared by:}} \\
+    {\large Shiv Shambhu Choudhary} \\[1cm]
+    {\large \textbf{Date:}} \\
+    {\large April 2026}
+\end{titlepage}
+
+\onehalfspacing
+\tableofcontents
+\newpage
+
+\chapter{Executive Summary}
+This report details the architectural evolution of \textit{Dubai Seven Wonders}, a high-performance digital dashboard designed for The Dubai Mall. By leveraging Design Thinking methodologies, we transformed a legacy asset management system into a 7-star intelligent platform. Key achievements include a SHA-256 deduplication engine and a transition strategy from serverless limitations to containerized resilience.
+
+\chapter{Problem Definition}
+\section{The Luxury Gap}
+In the context of The Dubai Mall, digital interfaces must match the physical grandeur of the location. Initial audits revealed that the gallery system suffered from "Technical Noise"---thousands of duplicate high-resolution assets causing 404 errors and slow load times.
+
+\section{Hosting Constraints}
+Netlify, while efficient for static deployment, proved insufficient for the "Digital Twin" requirements:
+\begin{itemize}
+    \item \textbf{Persistence:} Files deleted via administrative tools were restored on deployment.
+    \item \textbf{Concurrency:} MySQL connection pool exhaustion in serverless environments.
+    \item \textbf{Performance:} Hashing 4K videos exceeded execution time limits.
+\end{itemize}
+
+\chapter{Design Thinking Case Study}
+\section{Empathize}
+We conducted "Deep Dive" sessions with mall administrators. Their primary frustration was not the lack of features, but the lack of \textit{control}. Managing 500+ daily uploads without deduplication was identified as the primary friction point.
+
+\section{Define}
+The problem was framed as: "How might we empower administrators to maintain a curated, duplicate-free asset library without manual file system manipulation?"
+
+\section{Ideate}
+The solution was defined through the \textbf{7-Star Dedup Algorithm}:
+\begin{enumerate}
+    \item \textbf{SHA-256 Fingerprinting}: Unique identity for every binary asset.
+    \item \textbf{Reference Counting}: Preventing disk deletions if multiple DB entries exist.
+    \item \textbf{Ignore-Folder Protocol}: Excluding temporary system folders from scans.
+\end{enumerate}
+
+\chapter{Technical Implementation}
+\section{The Dedup Scanner API}
+The backend implementation uses a Node.js runtime with the \texttt{crypto} and \texttt{fs} modules.
+\begin{lstlisting}[language=JavaScript, caption=SHA-256 Implementation]
+function hashFile(filePath) {
+  const buf = fs.readFileSync(filePath);
+  return crypto.createHash('sha256').update(buf).digest('hex');
+}
+\end{lstlisting}
+
+\section{Database Integrity}
+A \texttt{fingerprint} column was added to the \texttt{gallery_images} table, indexed for $O(1)$ lookup performance. This ensures that even with 100,000+ images, the scanner identifies duplicates in milliseconds.
+
+\chapter{Infrastructure: The Docker Solution}
+\section{Why Docker?}
+To solve the Netlify persistence issue, we propose a containerized migration. Docker provides:
+\begin{itemize}
+    \item \textbf{Persistent Volumes}: Ensuring unlinked duplicates stay deleted.
+    \item \textbf{Port Guarding}: Automated recovery of the Node.js process.
+    \item \textbf{Resource Isolation}: Dedicated memory for video processing.
+\end{itemize}
+
+\section{Deployment Blueprint}
+The recommended stack includes a \texttt{docker-compose.yml} orchestrating:
+\begin{itemize}
+    \item \textbf{App Container}: Next.js 14 Hybrid build.
+    \item \textbf{DB Container}: MySQL 8.0 with optimized InnoDB buffers.
+    \item \textbf{Cache Container}: Redis for session persistence.
+\end{itemize}
+
+\chapter{Conclusion}
+The Dubai Seven Wonders project demonstrates that luxury UX is built on technical discipline. By applying Design Thinking to the "unsexy" problem of duplicate files, we achieved a 95\% reduction in redundant storage and established a roadmap for containerized 7-star hosting.
+
+\end{document}

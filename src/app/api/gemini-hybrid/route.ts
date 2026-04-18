@@ -31,15 +31,17 @@ export async function POST(req: NextRequest) {
     ]);
 
     const responseText = result.response.text();
-    
-    // Usage Tracking
+
     const usage = result.response.usageMetadata;
     await recordUsage({
       provider: 'gemini',
+      model: 'gemini-1.5-flash',
+      endpoint: 'gemini-hybrid',
+      userId: userId || null,
       inputTokens: usage?.promptTokenCount || 0,
       outputTokens: usage?.candidatesTokenCount || 0,
       totalTokens: (usage?.promptTokenCount || 0) + (usage?.candidatesTokenCount || 0),
-      success: true
+      success: true,
     });
 
     return NextResponse.json({ 
@@ -49,6 +51,14 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error: any) {
+    await recordUsage({
+      provider: 'gemini',
+      model: 'gemini-1.5-flash',
+      endpoint: 'gemini-hybrid',
+      inputTokens: 0, outputTokens: 0, totalTokens: 0,
+      success: false,
+      errorType: error?.status === 429 ? '429' : 'error',
+    });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

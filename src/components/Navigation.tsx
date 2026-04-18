@@ -1,9 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, ExternalLink } from 'lucide-react';
 import { SECTIONS } from '@/lib/data';
 import clsx from 'clsx';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 interface Props {
   active: string;
@@ -15,6 +18,9 @@ export default function Navigation({ active, onNavigate, onModuleOpen }: Props) 
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [exploreOpen, setExploreOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const { data: session } = useSession();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 50);
@@ -22,7 +28,22 @@ export default function Navigation({ active, onNavigate, onModuleOpen }: Props) 
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  const navItems = SECTIONS.filter(s => s.id !== 'hero');
+  const handleNav = (id: string) => {
+    if (id === 'experience') {
+      router.push('/experience');
+    } else if (pathname !== '/') {
+      router.push('/#' + id);
+    } else {
+      onNavigate(id);
+      // Fallback: Manually scroll if onNavigate didn't reach the target
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+    }
+    setMobileOpen(false);
+  };
+
+  const navItems = SECTIONS.filter(s => s.id !== 'hero' && s.id !== 'experience');
 
   return (
     <>
@@ -32,30 +53,30 @@ export default function Navigation({ active, onNavigate, onModuleOpen }: Props) 
         transition={{ duration: 0.8, delay: 0.5 }}
         className={clsx(
           'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
-          scrolled
+          scrolled || pathname !== '/'
             ? 'bg-[#050505]/95 backdrop-blur-xl border-b border-gold/10 py-3'
             : 'bg-transparent py-5'
         )}
       >
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 flex items-center justify-between">
           {/* Logo */}
-          <button onClick={() => onNavigate('hero')} className="flex flex-col leading-none">
+          <Link href="/" className="flex flex-col leading-none">
             <span className="font-display text-white text-lg tracking-[0.2em] uppercase font-semibold">
               The Dubai Mall
             </span>
             <span className="text-[9px] tracking-[0.5em] text-gold uppercase font-sans">
               The Epicenter
             </span>
-          </button>
+          </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
             {navItems.map((s) => (
               <button
                 key={s.id}
-                onClick={() => onNavigate(s.id)}
+                onClick={() => handleNav(s.id)}
                 className={clsx(
-                  'text-[11px] tracking-widest uppercase font-sans transition-colors duration-200',
+                  'text-[10px] xl:text-[11px] tracking-widest uppercase font-sans transition-colors duration-200 whitespace-nowrap',
                   active === s.id ? 'text-gold' : 'text-white/50 hover:text-white'
                 )}
               >
@@ -86,7 +107,11 @@ export default function Navigation({ active, onNavigate, onModuleOpen }: Props) 
                     ].map((item) => (
                       <button
                         key={item.module}
-                        onClick={() => { onModuleOpen(item.module); setExploreOpen(false); }}
+                        onClick={() => { 
+                          if (pathname !== '/') router.push('/#' + item.module);
+                          else onModuleOpen(item.module); 
+                          setExploreOpen(false); 
+                        }}
                         className="block w-full text-left px-5 py-3 text-[11px] tracking-wider uppercase text-white/60 hover:text-gold hover:bg-gold/5 transition-colors border-b border-gold/10 last:border-0"
                       >
                         {item.label}
@@ -100,12 +125,41 @@ export default function Navigation({ active, onNavigate, onModuleOpen }: Props) 
 
           {/* Partner CTA */}
           <div className="hidden lg:flex items-center gap-4">
-            <button
-              onClick={() => onModuleOpen('leasing')}
-              className="btn-outline text-[10px] py-2.5 px-5"
-            >
-              For Partners
-            </button>
+            {/* Museum of the Future — premium/admin only */}
+            {session && ((session.user as any).is_premium || session.user.role === 'admin') && (
+              <a
+                href="http://localhost:5007"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-[9px] tracking-widest uppercase font-sans text-[#C9A052]/60 hover:text-[#C9A052] transition-colors border border-[#C9A052]/10 hover:border-[#C9A052]/40 px-3 py-2"
+              >
+                <ExternalLink size={10} /> 7★ Museum
+              </a>
+            )}
+            {session ? (
+              <Link
+                href={session.user.role === 'admin' ? '/admin' : '/#experience'}
+                className="flex items-center gap-2 text-gold text-[10px] tracking-widest uppercase font-sans px-4 py-2 border border-gold/20 hover:bg-gold/5 transition-all"
+              >
+                <User size={14} />
+                {session.user.role === 'admin' ? 'Dashboard' : 'My 7★'}
+              </Link>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/login"
+                  className="text-[10px] tracking-widest uppercase text-white/60 hover:text-white transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="btn-outline text-[10px] py-2 px-4 border-gold/40 text-gold hover:bg-gold hover:text-black"
+                >
+                  Join Now
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu */}
@@ -139,7 +193,7 @@ export default function Navigation({ active, onNavigate, onModuleOpen }: Props) 
               {SECTIONS.map((s) => (
                 <button
                   key={s.id}
-                  onClick={() => { onNavigate(s.id); setMobileOpen(false); }}
+                  onClick={() => handleNav(s.id)}
                   className={clsx(
                     'text-left text-2xl font-display transition-colors',
                     active === s.id ? 'text-gold' : 'text-white/60'
@@ -150,15 +204,14 @@ export default function Navigation({ active, onNavigate, onModuleOpen }: Props) 
               ))}
             </nav>
             <div className="mt-auto flex flex-col gap-4">
-              {['Events & Hosting', 'Sponsorship', 'Leasing'].map((label, i) => (
-                <button
-                  key={i}
-                  onClick={() => { onModuleOpen(['events', 'sponsorship', 'leasing'][i]); setMobileOpen(false); }}
-                  className="text-left text-[11px] tracking-widest uppercase text-gold/70 hover:text-gold transition-colors"
-                >
-                  {label}
-                </button>
-              ))}
+               {session ? (
+                 <Link href="/admin" className="text-gold text-2xl font-display">Dashboard</Link>
+               ) : (
+                 <>
+                   <Link href="/login" className="text-white/60 text-2xl font-display">Login</Link>
+                   <Link href="/signup" className="text-gold text-2xl font-display">Join the Epicenter</Link>
+                 </>
+               )}
             </div>
           </motion.div>
         )}

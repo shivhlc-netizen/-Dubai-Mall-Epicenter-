@@ -6,9 +6,10 @@ import clsx from 'clsx';
 interface DBUser {
   id: number; name: string; email: string; role: 'admin' | 'user';
   active: number; last_login: string | null; created_at: string;
+  api_budget: number; api_used: number;
 }
 
-const emptyForm = { name: '', email: '', password: '', role: 'user' as const };
+const emptyForm = { name: '', email: '', password: '', role: 'user' as const, api_budget: 1000 };
 
 export default function UsersAdmin() {
   const [users, setUsers]     = useState<DBUser[]>([]);
@@ -41,8 +42,13 @@ export default function UsersAdmin() {
   async function saveEdit() {
     if (!editing) return;
     setSaving(true); setError('');
-    const body: Record<string, unknown> = { name: editing.name, email: editing.email, role: editing.role };
-    if ((form as any).password) body.password = (form as any).password;
+    const body: Record<string, unknown> = { 
+      name: editing.name, 
+      email: editing.email, 
+      role: editing.role,
+      api_budget: editing.api_budget 
+    };
+    if (form.password) body.password = form.password;
     const r = await fetch(`/api/users/${editing.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -52,6 +58,7 @@ export default function UsersAdmin() {
     setSaving(false);
     if (!r.ok) { setError(data.error || 'Update failed'); return; }
     setEditing(null);
+    setForm(emptyForm);
     fetchUsers();
   }
 
@@ -95,7 +102,7 @@ export default function UsersAdmin() {
           <h1 className="font-display text-3xl text-white mb-1">User Management</h1>
           <p className="text-white/30 text-sm font-sans">{users.length} users registered</p>
         </div>
-        <button onClick={() => { setAdding(true); setError(''); }} className="btn-gold flex items-center gap-2">
+        <button onClick={() => { setAdding(true); setError(''); setForm(emptyForm); }} className="btn-gold flex items-center gap-2">
           <Plus size={14} /> Add User
         </button>
       </div>
@@ -109,7 +116,7 @@ export default function UsersAdmin() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gold/10">
-                {['Name', 'Email', 'Role', 'Status', 'Last Login', 'Actions'].map(h => (
+                {['Name', 'Email', 'Role', 'Status', 'API Budget', 'Usage', 'Actions'].map(h => (
                   <th key={h} className="text-left px-4 py-3 text-[10px] tracking-widest uppercase text-white/30 font-sans">
                     {h}
                   </th>
@@ -140,13 +147,22 @@ export default function UsersAdmin() {
                       {u.active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-white/30 text-xs font-sans">
-                    {u.last_login ? new Date(u.last_login).toLocaleDateString() : 'Never'}
+                  <td className="px-4 py-3 text-white/50 text-xs font-mono">{u.api_budget?.toLocaleString()}</td>
+                  <td className="px-4 py-3">
+                    <div className="w-24 h-1 bg-white/5 rounded-full overflow-hidden mb-1">
+                      <div 
+                        className="h-full bg-gold/40" 
+                        style={{ width: `${Math.min(100, (u.api_used / (u.api_budget || 1)) * 100)}%` }} 
+                      />
+                    </div>
+                    <div className="text-[9px] text-white/20 font-sans uppercase">
+                      {u.api_used?.toLocaleString()} used
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <button
-                        onClick={() => { setEditing(u); setForm({ ...emptyForm }); setError(''); }}
+                        onClick={() => { setEditing(u); setForm(emptyForm); setError(''); }}
                         className="text-white/30 hover:text-gold transition-colors p-1"
                       >
                         <Pencil size={13} />
@@ -160,13 +176,6 @@ export default function UsersAdmin() {
                         )}
                       >
                         {u.active ? 'Deactivate' : 'Activate'}
-                      </button>
-                      <button
-                        onClick={() => resetSecurity(u.id)}
-                        title="Reset failed attempts / Unlock"
-                        className="text-amber-500/40 hover:text-amber-500 transition-colors p-1"
-                      >
-                        <RotateCcw size={13} />
                       </button>
                       <button
                         onClick={() => deleteUser(u.id)}
@@ -227,19 +236,33 @@ export default function UsersAdmin() {
                   placeholder={editing ? '••••••••' : 'Min 8 chars, 1 upper, 1 number, 1 special'}
                 />
               </div>
-              <div>
-                <label className="block text-[10px] tracking-widest uppercase text-white/40 font-sans mb-1">Role</label>
-                <select
-                  value={editing ? editing.role : form.role}
-                  onChange={e => {
-                    const v = e.target.value as 'admin' | 'user';
-                    editing ? setEditing({ ...editing, role: v }) : setForm({ ...form, role: v as any });
-                  }}
-                  className="w-full bg-[#0A0A0A] border border-gold/15 text-white text-sm px-3 py-2 focus:outline-none focus:border-gold/40"
-                >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] tracking-widest uppercase text-white/40 font-sans mb-1">Role</label>
+                  <select
+                    value={editing ? editing.role : form.role}
+                    onChange={e => {
+                      const v = e.target.value as 'admin' | 'user';
+                      editing ? setEditing({ ...editing, role: v }) : setForm({ ...form, role: v as any });
+                    }}
+                    className="w-full bg-[#0A0A0A] border border-gold/15 text-white text-sm px-3 py-2 focus:outline-none focus:border-gold/40"
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] tracking-widest uppercase text-white/40 font-sans mb-1">API Token Budget</label>
+                  <input
+                    type="number"
+                    value={editing ? editing.api_budget : form.api_budget}
+                    onChange={e => {
+                      const v = parseInt(e.target.value, 10) || 0;
+                      editing ? setEditing({ ...editing, api_budget: v }) : setForm({ ...form, api_budget: v });
+                    }}
+                    className="w-full bg-white/5 border border-gold/15 text-white text-sm px-3 py-2 focus:outline-none focus:border-gold/40"
+                  />
+                </div>
               </div>
             </div>
 

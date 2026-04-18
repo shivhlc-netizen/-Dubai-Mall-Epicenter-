@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Image, Users, Grid3x3, Activity, Globe, MousePointer2, Clock, RefreshCcw } from 'lucide-react';
+import { Image, Users, Grid3x3, Activity, Globe, MousePointer2, Clock, RefreshCcw, Zap, Play, CalendarX2, X } from 'lucide-react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ProjectBoard from '@/components/admin/ProjectBoard';
 import FootfallAnalytics from '@/components/admin/FootfallAnalytics';
 
@@ -24,10 +24,19 @@ const getStatus = (count: number) => {
   return { label: 'Low', color: 'text-white/30' };
 };
 
+interface SyncBanner {
+  isDue: boolean;
+  isPostponed: boolean;
+  estimatedTokens: number;
+  pendingImages: number;
+}
+
 export default function AdminDashboard() {
   const [stats, setStats]     = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [resetting, setResetting] = useState(false);
+  const [syncBanner, setSyncBanner] = useState<SyncBanner | null>(null);
+  const [syncDismissed, setSyncDismissed] = useState(false);
 
   const fetchStats = () => {
     setLoading(true);
@@ -39,6 +48,20 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchStats();
+    // Check sync status
+    fetch('/api/admin/scheduled-sync')
+      .then(r => r.json())
+      .then(d => {
+        if (d.schedule) {
+          setSyncBanner({
+            isDue: d.schedule.isDue,
+            isPostponed: d.schedule.isPostponed,
+            estimatedTokens: d.estimate.estimatedTokens,
+            pendingImages: d.estimate.pendingImages,
+          });
+        }
+      })
+      .catch(() => null);
   }, []);
 
   const handleReset = async () => {
@@ -89,6 +112,42 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Sync Due Banner */}
+      <AnimatePresence>
+        {syncBanner?.isDue && !syncDismissed && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="flex items-center justify-between px-6 py-4 bg-gold/5 border border-gold/30 rounded-sm"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-2.5 h-2.5 rounded-full bg-gold animate-pulse" />
+              <div>
+                <p className="text-gold text-sm font-sans font-medium">Daily Sync Is Due — 19:00</p>
+                <p className="text-white/40 text-[10px] font-sans mt-0.5 uppercase tracking-wider">
+                  {syncBanner.pendingImages} images pending · Est. {syncBanner.estimatedTokens.toLocaleString()} tokens
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/admin/sync"
+                className="flex items-center gap-2 px-4 py-2 bg-gold/10 border border-gold/30 text-gold text-[10px] uppercase tracking-widest hover:bg-gold hover:text-black transition-all"
+              >
+                <Zap size={11} /> Manage Sync
+              </Link>
+              <button
+                onClick={() => setSyncDismissed(true)}
+                className="p-2 text-white/20 hover:text-white/50 transition-colors"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {loading ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

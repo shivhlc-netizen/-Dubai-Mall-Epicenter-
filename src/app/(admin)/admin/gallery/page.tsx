@@ -6,7 +6,7 @@ import {
   Upload, Wand2, Loader2, X, Check, Trash2, Eye, EyeOff, Activity,
   Sparkles, AlertCircle, ChevronDown, ImagePlus, FolderSearch,
   Clock, AlertTriangle, Star, StarOff, CheckSquare, Square,
-  BookOpen, Save, ChevronUp,
+  BookOpen, Save, ChevronUp, User, Film, Image as ImageIcon, Users,
 } from 'lucide-react';
 
 interface Category { id: number; name: string; slug: string; }
@@ -19,7 +19,16 @@ interface GalleryImage {
   sort_order: number; active: number; featured: number; shift_style: string;
   media_type: 'image' | 'video';
 }
-interface PendingFile { filename: string; path: string; size: number; }
+interface PendingFile {
+  filename: string; path: string; size: number; sizeKb: string;
+  media_type: 'image' | 'video'; modified: string; suggestedTitle: string;
+}
+interface RegisteredFile {
+  filename: string; path: string; title: string; media_type: string;
+  uploader_id: number | null; uploader_name: string | null; uploader_email: string | null;
+  active: number; featured: number; created_at: string;
+}
+interface SyncOwner { id: number; name: string; email: string; }
 interface UploadSlot {
   id: string; file: File; previewUrl: string;
   title: string; description: string; story: string;
@@ -51,10 +60,13 @@ export default function GalleryAdmin() {
   // Sync preview modal
   const [syncOpen, setSyncOpen]         = useState(false);
   const [pending, setPending]           = useState<PendingFile[]>([]);
+  const [registered, setRegistered]     = useState<RegisteredFile[]>([]);
+  const [syncOwner, setSyncOwner]       = useState<SyncOwner | null>(null);
   const [syncLoading, setSyncLoading]   = useState(false);
   const [selected, setSelected]         = useState<Set<string>>(new Set());
   const [syncing, setSyncing]           = useState(false);
   const [syncDone, setSyncDone]         = useState('');
+  const [syncTab, setSyncTab]           = useState<'pending' | 'registered'>('pending');
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<GalleryImage | null>(null);
@@ -201,10 +213,12 @@ export default function GalleryAdmin() {
 
   // ── Sync Preview ──────────────────────────────────────────────────────────
   const openSync = async () => {
-    setSyncOpen(true); setSyncLoading(true); setSyncDone(''); setSelected(new Set());
+    setSyncOpen(true); setSyncLoading(true); setSyncDone(''); setSelected(new Set()); setSyncTab('pending');
     const res = await fetch('/api/gallery/sync');
     const data = await res.json();
     setPending(data.pending || []);
+    setRegistered(data.registered || []);
+    setSyncOwner(data.willBeOwnedBy || null);
     setSyncLoading(false);
   };
 
@@ -758,61 +772,170 @@ export default function GalleryAdmin() {
             className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
             onClick={()=>setSyncOpen(false)}>
             <motion.div initial={{scale:0.96,y:16}} animate={{scale:1,y:0}}
-              className="bg-[#090909] border border-gold/20 w-full max-w-2xl max-h-[85vh] flex flex-col"
+              className="bg-[#090909] border border-gold/20 w-full max-w-3xl max-h-[90vh] flex flex-col"
               onClick={e=>e.stopPropagation()}>
-              <div className="flex justify-between items-center px-6 py-4 border-b border-gold/10">
+
+              {/* Header */}
+              <div className="flex justify-between items-start px-6 py-4 border-b border-gold/10">
                 <div>
-                  <h3 className="font-display text-lg text-white">Sync Preview</h3>
-                  <p className="text-white/30 text-xs font-sans mt-0.5">Files on disk not yet in the gallery database</p>
+                  <h3 className="font-display text-lg text-white flex items-center gap-2">
+                    <FolderSearch size={16} className="text-gold/60"/> Sync Preview
+                  </h3>
+                  <p className="text-white/30 text-[10px] font-sans mt-0.5 uppercase tracking-widest">
+                    Disk → Gallery Database
+                  </p>
                 </div>
-                <button onClick={()=>setSyncOpen(false)} className="text-white/30 hover:text-white transition-colors"><X size={16}/></button>
+                <div className="flex items-center gap-4">
+                  {syncOwner && !syncLoading && (
+                    <div className="flex items-center gap-2 text-[10px] font-sans text-white/30 border border-white/8 px-3 py-1.5">
+                      <User size={10} className="text-gold/60"/>
+                      <span>Will be owned by <span className="text-gold/80">{syncOwner.name}</span></span>
+                    </div>
+                  )}
+                  <button onClick={()=>setSyncOpen(false)} className="text-white/30 hover:text-white transition-colors"><X size={16}/></button>
+                </div>
               </div>
+
+              {/* Stats bar */}
+              {!syncLoading && (
+                <div className="flex gap-0 border-b border-white/5">
+                  <button onClick={()=>setSyncTab('pending')}
+                    className={`flex items-center gap-2 px-5 py-2.5 text-[10px] font-sans uppercase tracking-widest border-b-2 transition-all ${syncTab==='pending'?'border-gold text-gold':'border-transparent text-white/30 hover:text-white/60'}`}>
+                    <ImageIcon size={10}/> Unsynced ({pending.length})
+                  </button>
+                  <button onClick={()=>setSyncTab('registered')}
+                    className={`flex items-center gap-2 px-5 py-2.5 text-[10px] font-sans uppercase tracking-widest border-b-2 transition-all ${syncTab==='registered'?'border-[#48CAE4] text-[#48CAE4]':'border-transparent text-white/30 hover:text-white/60'}`}>
+                    <Users size={10}/> Registered ({registered.length})
+                  </button>
+                </div>
+              )}
+
+              {/* Body */}
               <div className="flex-1 overflow-y-auto px-6 py-4">
                 {syncLoading ? (
-                  <div className="flex items-center gap-2 py-10 text-white/30 font-sans"><Loader2 size={15} className="animate-spin"/> Scanning disk…</div>
-                ) : pending.length === 0 ? (
-                  <div className="py-10 text-center text-white/25 font-sans">
-                    {syncDone || 'All files are already in the gallery. Nothing to sync.'}
+                  <div className="flex items-center gap-2 py-12 justify-center text-white/30 font-sans">
+                    <Loader2 size={15} className="animate-spin"/> Scanning disk…
                   </div>
-                ) : (
+
+                ) : syncTab === 'pending' ? (
                   <>
-                    {syncDone && <p className="text-green-400 text-sm font-sans mb-4">{syncDone}</p>}
-                    <div className="flex items-center justify-between mb-3">
-                      <p className="text-white/40 text-xs font-sans">{pending.length} unregistered file{pending.length!==1?'s':''} found</p>
-                      <div className="flex gap-4 text-xs uppercase tracking-wider font-sans">
-                        <button onClick={selectAll} className="text-gold/60 hover:text-gold transition-colors">Select All</button>
-                        <button onClick={selectNone} className="text-white/30 hover:text-white/60 transition-colors">None</button>
+                    {syncDone && (
+                      <div className="flex items-center gap-2 p-3 mb-4 bg-green-950/20 border border-green-700/30 text-green-400 text-xs font-sans">
+                        <Check size={12}/> {syncDone}
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      {pending.map(f => (
-                        <label key={f.filename}
-                          className={`flex items-center gap-3 p-3 border cursor-pointer transition-all ${
-                            selected.has(f.filename) ? 'border-gold/40 bg-gold/5' : 'border-white/5 hover:border-white/15'
-                          }`}>
-                          <input type="checkbox" checked={selected.has(f.filename)} onChange={()=>toggleSelect(f.filename)}
-                            className="accent-gold w-4 h-4 flex-shrink-0"/>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={f.path} alt="" className="w-12 h-12 object-cover flex-shrink-0"/>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-white text-sm font-sans truncate">{f.filename}</p>
-                            <p className="text-white/25 text-xs font-sans">{(f.size/1024).toFixed(0)} KB</p>
+                    )}
+                    {pending.length === 0 ? (
+                      <div className="py-12 text-center text-white/25 font-sans text-sm">
+                        ✓ All files are registered. Nothing to sync.
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between mb-4">
+                          <p className="text-white/40 text-xs font-sans">
+                            {pending.length} file{pending.length!==1?'s':''} on disk not in gallery
+                          </p>
+                          <div className="flex gap-4 text-[10px] uppercase tracking-wider font-sans">
+                            <button onClick={selectAll} className="text-gold/60 hover:text-gold transition-colors">Select All</button>
+                            <button onClick={selectNone} className="text-white/30 hover:text-white/60 transition-colors">Clear</button>
                           </div>
-                          {selected.has(f.filename) && <Check size={14} className="text-gold flex-shrink-0"/>}
-                        </label>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {pending.map(f => {
+                            const sel = selected.has(f.filename);
+                            return (
+                              <label key={f.filename}
+                                className={`relative cursor-pointer border transition-all group ${sel ? 'border-gold/60 ring-1 ring-gold/30' : 'border-white/8 hover:border-white/25'}`}>
+                                <input type="checkbox" checked={sel} onChange={()=>toggleSelect(f.filename)} className="sr-only"/>
+                                {/* Thumbnail */}
+                                <div className="relative aspect-video bg-white/5">
+                                  {f.media_type === 'video' ? (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                      <Film size={24} className="text-white/20"/>
+                                    </div>
+                                  ) : (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={f.path} alt="" className="w-full h-full object-cover"/>
+                                  )}
+                                  {/* Media type badge */}
+                                  <span className={`absolute top-1.5 left-1.5 text-[8px] uppercase tracking-widest px-1.5 py-0.5 font-mono ${f.media_type==='video'?'bg-purple-900/80 text-purple-300':'bg-black/60 text-white/50'}`}>
+                                    {f.media_type}
+                                  </span>
+                                  {sel && (
+                                    <div className="absolute inset-0 bg-gold/15 flex items-center justify-center">
+                                      <Check size={18} className="text-gold"/>
+                                    </div>
+                                  )}
+                                </div>
+                                {/* Info */}
+                                <div className="p-2.5">
+                                  <p className="text-white text-[11px] font-sans truncate leading-tight">{f.suggestedTitle}</p>
+                                  <p className="text-white/25 text-[9px] font-sans mt-0.5">{f.sizeKb}</p>
+                                </div>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
+                  </>
+
+                ) : (
+                  /* REGISTERED tab — user mapping */
+                  <>
+                    <p className="text-white/30 text-xs font-sans mb-4">
+                      {registered.length} registered file{registered.length!==1?'s':''} — showing uploader mapping
+                    </p>
+                    <div className="space-y-1.5">
+                      {registered.length === 0 ? (
+                        <div className="py-8 text-center text-white/20 font-sans text-xs">No registered files</div>
+                      ) : registered.map(f => (
+                        <div key={f.filename} className="flex items-center gap-3 p-2.5 border border-white/5 hover:border-white/10 transition-colors">
+                          <div className="w-10 h-10 flex-shrink-0 bg-white/5">
+                            {f.media_type === 'video' ? (
+                              <div className="w-full h-full flex items-center justify-center"><Film size={14} className="text-white/20"/></div>
+                            ) : (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={f.path} alt="" className="w-full h-full object-cover"/>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-white text-xs font-sans truncate">{f.title}</p>
+                            <p className="text-white/25 text-[9px] font-sans font-mono truncate">{f.filename}</p>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-[9px] font-sans flex-shrink-0">
+                            {f.active ? <span className="text-green-400">Live</span> : <span className="text-white/20">Hidden</span>}
+                            {f.featured ? <span className="text-amber-400 ml-1">★</span> : null}
+                          </div>
+                          <div className="text-right flex-shrink-0 ml-2">
+                            {f.uploader_name ? (
+                              <div className="flex items-center gap-1.5 text-[9px] font-sans text-[#48CAE4]/80">
+                                <User size={9}/>
+                                <span>{f.uploader_name}</span>
+                              </div>
+                            ) : (
+                              <span className="text-[9px] text-white/20 font-sans">—</span>
+                            )}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </>
                 )}
               </div>
-              {pending.length > 0 && (
+
+              {/* Footer */}
+              {syncTab === 'pending' && pending.length > 0 && (
                 <div className="px-6 py-4 border-t border-gold/10 flex items-center justify-between gap-3">
-                  <p className="text-white/30 text-xs font-sans">{selected.size} selected</p>
+                  <div className="text-xs font-sans text-white/30">
+                    {selected.size > 0
+                      ? <span><span className="text-gold">{selected.size}</span> selected · will be owned by <span className="text-white/60">{syncOwner?.name || 'you'}</span></span>
+                      : 'Select files to sync'}
+                  </div>
                   <div className="flex gap-3">
-                    <button onClick={()=>setSyncOpen(false)} className="btn-outline text-xs">Cancel</button>
+                    <button onClick={()=>setSyncOpen(false)} className="px-4 py-2 border border-white/10 text-white/40 hover:text-white text-xs uppercase tracking-widest font-sans transition-colors">Cancel</button>
                     <button onClick={doSync} disabled={selected.size===0||syncing}
                       className="flex items-center gap-2 px-5 py-2 bg-gold text-black text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-40">
-                      {syncing?<Loader2 size={12} className="animate-spin"/>:<Check size={12}/>}
+                      {syncing ? <Loader2 size={12} className="animate-spin"/> : <Check size={12}/>}
                       Add {selected.size > 0 ? `${selected.size} ` : ''}to Gallery
                     </button>
                   </div>
