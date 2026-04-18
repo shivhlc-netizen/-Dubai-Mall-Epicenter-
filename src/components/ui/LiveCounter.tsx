@@ -43,7 +43,7 @@ export default function LiveCounter() {
           <Globe size={20} />
         </div>
         <div className="text-3xl font-display text-white mb-1">
-          <CountUp end={stats.count} separator="," duration={2.5} />
+          <CountUp end={stats.count} separator="," duration={2.5} enableScrollSpy={true} scrollSpyOnce={true} />
         </div>
         <div className="text-[10px] tracking-[0.3em] uppercase text-white/30 font-sans font-bold">Total Epicenter Visits</div>
       </motion.div>
@@ -61,7 +61,7 @@ export default function LiveCounter() {
           <Users size={20} />
         </div>
         <div className="text-3xl font-display text-white mb-1">
-          <CountUp end={stats.live} separator="," duration={4} />
+          <CountUp end={stats.live} separator="," duration={4} enableScrollSpy={true} scrollSpyOnce={true} />
           <span className="text-gold text-lg ml-1">+</span>
         </div>
         <div className="text-[10px] tracking-[0.3em] uppercase text-green-500/60 font-sans font-bold">Always Live Users</div>
@@ -78,7 +78,7 @@ export default function LiveCounter() {
           <Activity size={20} />
         </div>
         <div className="text-3xl font-display text-white mb-1">
-          <CountUp end={99.9} decimals={1} duration={2} />
+          <CountUp end={99.9} decimals={1} duration={2} enableScrollSpy={true} scrollSpyOnce={true} />
           <span className="text-sm ml-0.5">%</span>
         </div>
         <div className="text-[10px] tracking-[0.3em] uppercase text-white/30 font-sans font-bold">Uptime Reliability</div>

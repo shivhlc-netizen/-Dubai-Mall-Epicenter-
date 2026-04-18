@@ -11,15 +11,17 @@ interface Props {
 }
 
 export default function AnimatedCounter({ value, suffix = '', decimals = 0, duration = 2.5, className = '' }: Props) {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
-
   return (
-    <span ref={ref} className={className}>
-      {inView ? (
-        <CountUp end={value} suffix={suffix} decimals={decimals} duration={duration} separator="," />
-      ) : (
-        `0${suffix}`
-      )}
+    <span className={className}>
+      <CountUp 
+        end={value} 
+        suffix={suffix} 
+        decimals={decimals} 
+        duration={duration} 
+        separator="," 
+        enableScrollSpy={true}
+        scrollSpyOnce={true}
+      />
     </span>
   );
 }
