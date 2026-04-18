@@ -1,10 +1,22 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const FALLBACK_PULSE = {
+  title: 'Experience the Grandeur',
+  content: 'Dubai Mall continues to set the standard for global retail and entertainment. Visit us for an unforgettable experience.',
+  category: 'Lifestyle',
+  ai_insight: 'Consistency is the hallmark of true luxury.',
+};
 
 export async function generatePulseUpdate() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn('GEMINI_API_KEY not set — returning fallback pulse');
+    return FALLBACK_PULSE;
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-  
+
   const prompt = `
     You are the AI Concierge for The Dubai Mall. 
     Generate a fresh, exciting update about what's happening at the mall this week.
@@ -32,11 +44,6 @@ export async function generatePulseUpdate() {
     throw new Error('Could not parse AI response');
   } catch (error) {
     console.error('Gemini generation failed:', error);
-    return {
-      title: 'Experience the Grandeur',
-      content: 'Dubai Mall continues to set the standard for global retail and entertainment. Visit us for an unforgettable experience.',
-      category: 'Lifestyle',
-      ai_insight: 'Consistency is the hallmark of true luxury.'
-    };
+    return FALLBACK_PULSE;
   }
 }

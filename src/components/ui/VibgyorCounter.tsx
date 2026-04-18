@@ -15,16 +15,17 @@ const VIBGYOR = [
 ];
 
 export default function VibgyorCounter() {
-  const [count, setCount] = useState<number | null>(null);
+  const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   const fetchCount = async () => {
     try {
       const res = await fetch('/api/stats/visits');
       const data = await res.json();
-      setCount(data.count || 0);
+      setCount(data.count ?? 0);
     } catch (e) {
       console.error('Counter fetch error:', e);
+      setCount(0);
     } finally {
       setLoading(false);
     }
@@ -36,9 +37,7 @@ export default function VibgyorCounter() {
     return () => clearInterval(interval);
   }, []);
 
-  if (loading || count === null) return null;
-
-  const digits = count.toString().padStart(6, '0').split('');
+  const digits = (loading ? 0 : count).toString().padStart(6, '0').split('');
 
   return (
     <motion.div 

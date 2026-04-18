@@ -8,6 +8,7 @@
 [build.environment]
   NODE_VERSION = "20"
   NEXT_TELEMETRY_DISABLED = "1"
+  NEXTAUTH_URL = "https://dubai-mall-epicenter.netlify.app"
 
 [[headers]]
   for = "/api/*"
@@ -23,9 +24,4 @@
 [functions."resilient-automation"]
   schedule = "@daily"
 
-# Redirect all 404s to home for SPA-like behavior
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = "200"
-  force = false
+# Next.js plugin handles all routing — no manual redirects needed
