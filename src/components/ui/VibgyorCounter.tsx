@@ -17,6 +17,7 @@ const VIBGYOR = [
 export default function VibgyorCounter() {
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [hasMounted, setHasMounted] = useState(false);
 
   const fetchCount = async () => {
     try {
@@ -32,10 +33,13 @@ export default function VibgyorCounter() {
   };
 
   useEffect(() => {
+    setHasMounted(true);
     fetchCount();
     const interval = setInterval(fetchCount, 15000); // Faster refresh (15s)
     return () => clearInterval(interval);
   }, []);
+
+  if (!hasMounted) return null;
 
   const digits = (loading ? 0 : count).toString().padStart(6, '0').split('');
 
