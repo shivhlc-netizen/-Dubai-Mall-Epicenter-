@@ -23,10 +23,42 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState('hero');
   const [openModule, setOpenModule] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(process.env.NODE_ENV === 'development');
+  const [password, setPassword] = useState('');
+  const [greeting, setGreeting] = useState('Welcome');
 
   useEffect(() => {
     setLoaded(true);
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting('Good Morning');
+    else if (hour < 17) setGreeting('Good Afternoon');
+    else setGreeting('Good Evening');
   }, []);
+
+  if (!isAuthorized && process.env.NODE_ENV === 'production') {
+    return (
+      <div className="fixed inset-0 z-[1000] bg-black flex items-center justify-center p-6">
+        <div className="max-w-md w-full text-center">
+          <h1 className="font-display text-2xl text-gold mb-4 uppercase tracking-[0.3em]">Access Restricted</h1>
+          <p className="text-white/40 text-xs font-sans mb-8 tracking-widest uppercase">The Epicenter Phase 1 — Private Preview</p>
+          <input 
+            type="password" 
+            placeholder="ENTER ACCESS KEY" 
+            className="w-full bg-white/5 border border-gold/20 p-4 text-white text-center font-sans tracking-[0.5em] focus:outline-none focus:border-gold transition-colors mb-4"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && password === 'DUBAI2026' && setIsAuthorized(true)}
+          />
+          <button 
+            onClick={() => password === 'DUBAI2026' && setIsAuthorized(true)}
+            className="text-[10px] text-gold/60 uppercase tracking-widest hover:text-gold transition-colors"
+          >
+            Authenticate
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -97,7 +129,7 @@ export default function Home() {
 
       {/* Main content */}
       <main>
-        <HeroSection onScrollDown={scrollToNext} />
+        <HeroSection onScrollDown={scrollToNext} greeting={greeting} />
         <WhySection />
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <LiveCounter />

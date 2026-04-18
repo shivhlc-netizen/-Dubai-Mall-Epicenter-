@@ -18,9 +18,10 @@ interface Props {
   onScrollDown: () => void;
   isManaging?: boolean;
   onToggleManage?: () => void;
+  greeting?: string;
 }
 
-export default function HeroSection({ onScrollDown, isManaging = false, onToggleManage = () => {} }: Props) {
+export default function HeroSection({ onScrollDown, isManaging = false, onToggleManage = () => {}, greeting = 'Welcome' }: Props) {
   const { data: session } = useSession();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -123,6 +124,11 @@ export default function HeroSection({ onScrollDown, isManaging = false, onToggle
             Downtown Dubai · UAE
           </span>
           <div className="h-px w-12 bg-gold/60" />
+        </motion.div>
+
+        {/* Greeting */}
+        <motion.div variants={item} className="text-gold/60 text-xs font-sans tracking-[0.4em] uppercase mb-2">
+          {greeting}
         </motion.div>
 
         {/* Main headline */}
