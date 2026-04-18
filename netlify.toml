@@ -17,6 +17,9 @@
 [functions]
   directory = "netlify/functions"
 
+[functions."cron-gemini-pulse"]
+  schedule = "0 0 * * 2,5" # Tuesday and Friday at 00:00 UTC
+
 # Redirect all 404s to home for SPA-like behavior
 [[redirects]]
   from = "/*"
