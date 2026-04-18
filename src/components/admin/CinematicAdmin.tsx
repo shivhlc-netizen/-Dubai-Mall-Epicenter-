@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X, Upload, Image as ImageIcon, Database, Loader2, CheckCircle2, Settings, Shield } from 'lucide-react';
+import { Plus, X, Upload, Image as ImageIcon, Database, Loader2, CheckCircle2, Settings, Shield, Sparkles } from 'lucide-react';
 
 interface Props {
   isManaging: boolean;
@@ -12,6 +12,7 @@ interface Props {
 export default function CinematicAdmin({ isManaging, onToggleManage }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [pulsing, setPulsing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -22,6 +23,18 @@ export default function CinematicAdmin({ isManaging, onToggleManage }: Props) {
     story: '',
   });
   const [file, setFile] = useState<File | null>(null);
+
+  const handleTriggerPulse = async () => {
+    setPulsing(true);
+    try {
+      const res = await fetch('/api/admin/scheduled-sync', { method: 'POST' });
+      if (res.ok) alert('Gemini Pulse Triggered Successfully!');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setPulsing(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,7 +270,17 @@ export default function CinematicAdmin({ isManaging, onToggleManage }: Props) {
                       </div>
                     </div>
 
-                    <div className="pt-8 border-t border-white/5 flex justify-end">
+                    <div className="pt-8 border-t border-white/5 flex justify-between items-center">
+                      <button
+                        type="button"
+                        onClick={handleTriggerPulse}
+                        disabled={pulsing}
+                        className="flex items-center gap-2 text-[10px] tracking-widest uppercase text-gold/60 hover:text-gold transition-colors disabled:opacity-30"
+                      >
+                        {pulsing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                        Trigger Gemini Pulse
+                      </button>
+
                       <button 
                         disabled={submitting || !file}
                         className="btn-gold px-12 py-4 flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed group"
