@@ -17,6 +17,7 @@ import WowFactsSection from '@/components/sections/WowFactsSection';
 import EventsModule from '@/components/modules/EventsModule';
 import SponsorshipModule from '@/components/modules/SponsorshipModule';
 import LeasingModule from '@/components/modules/LeasingModule';
+import FountainDivider from '@/components/ui/FountainDivider';
 import { SECTIONS } from '@/lib/data';
 
 export default function Home() {
@@ -131,15 +132,19 @@ export default function Home() {
       <main>
         <HeroSection onScrollDown={scrollToNext} greeting={greeting} />
         <WhySection />
+        <FountainDivider />
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <LiveCounter />
         </div>
         <RetailSection onExploreLeasing={() => setOpenModule('leasing')} />
+        <FountainDivider />
         <LuxurySection />
         <DiningSection />
+        <FountainDivider />
         <PulseSection />
         <AttractionsSection />
         <GallerySection />
+        <FountainDivider />
         <EventsSection
           onEventsModule={() => setOpenModule('events')}
           onSponsorModule={() => setOpenModule('sponsorship')}

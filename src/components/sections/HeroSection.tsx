@@ -133,10 +133,10 @@ export default function HeroSection({ onScrollDown, isManaging = false, onToggle
 
         {/* Main headline */}
         <motion.h1 variants={item} className="font-display leading-none mb-4">
-          <span className="block text-[clamp(3rem,10vw,9rem)] tracking-[0.08em] uppercase text-white font-semibold">
+          <span className="block text-[clamp(3rem,10vw,9rem)] tracking-[0.08em] uppercase text-shimmer-gold font-semibold">
             The Dubai
           </span>
-          <span className="block text-[clamp(3rem,10vw,9rem)] tracking-[0.08em] uppercase text-white font-semibold">
+          <span className="block text-[clamp(3rem,10vw,9rem)] tracking-[0.08em] uppercase text-shimmer-gold font-semibold">
             Mall
           </span>
         </motion.h1>
