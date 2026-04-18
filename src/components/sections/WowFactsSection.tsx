@@ -88,8 +88,8 @@ export default function WowFactsSection() {
             </span>
           </div>
           <h2 className="font-display text-[clamp(2rem,5vw,4rem)] text-white leading-tight">
-            Facts No Other Site<br />
-            <span className="text-gold-gradient">Dares to Tell</span>
+            Show The World<br />
+            <span className="text-gold-gradient">You Are Inside!!</span>
           </h2>
         </motion.div>
 
