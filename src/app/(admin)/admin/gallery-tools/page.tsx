@@ -759,7 +759,7 @@ function QuickToolsTab() {
                 <div className="text-[10px] text-orange-400/80 font-sans bg-orange-950/10 border border-orange-500/20 px-3 py-2">
                   ⚠ {Object.values(dupResults).filter(d => d.isDuplicate).length} duplicate(s) detected — they will be skipped on upload.
                   <span className="text-white/20 ml-2">
-                    Claude tokens used: {Object.values(dupResults).reduce((s, d) => s + (d.tokensUsed || 0), 0)}
+                    AI tokens used: {Object.values(dupResults).reduce((s, d) => s + (d.tokensUsed || 0), 0)}
                   </span>
                 </div>
               )}

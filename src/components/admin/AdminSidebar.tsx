@@ -86,29 +86,41 @@ export default function AdminSidebar() {
           Live Site
         </Link>
 
+import { Activity, ExternalLink, LogOut, UploadCloud, LayoutGrid } from 'lucide-react';
+...
+        <Link
+          href="https://github.com/shivhlc-netizen/-Dubai-Mall-Epicenter-/actions"
+          target="_blank"
+          className="flex w-full items-center gap-3 px-3 py-2 rounded-sm text-[10px] uppercase tracking-widest text-blue-400 bg-blue-900/10 border border-blue-500/20 hover:bg-blue-900/40 transition-all font-sans font-bold"
+        >
+          <Activity size={14} />
+          Monitor 7-Star Build
+        </Link>
+
         {/* Secure Netlify Push Trigger (Admin only) */}
         {data?.user?.role === 'admin' && (
           <button
             onClick={async () => {
-              if (!confirm('Are you sure you want to push all changes to the LIVE site on Netlify? This will trigger a full rebuild.')) return;
+              if (!confirm('Trigger a full site rebuild on Netlify?')) return;
               const btn = document.getElementById('push-trigger');
-              if (btn) btn.innerText = 'Pushing...';
+              const oldText = btn?.innerText || 'Push to Netlify';
+              if (btn) btn.innerText = 'Triggering...';
               try {
                 const res = await fetch('/api/admin/deploy', { method: 'POST' });
                 const d = await res.json();
-                if (res.ok) alert('🚀 Deployment Triggered! Your changes will be live in a few minutes.');
+                if (res.ok) alert('🚀 Netlify Build Triggered!');
                 else alert('❌ Push Failed: ' + (d.message || d.error));
               } catch (e) {
-                alert('❌ Error communicating with deployment server.');
+                alert('❌ Connection Error. Check Build Hook Config.');
               } finally {
-                if (btn) btn.innerText = 'Push to Live Site';
+                if (btn) btn.innerText = oldText;
               }
             }}
             id="push-trigger"
             className="flex w-full items-center gap-3 px-3 py-2 rounded-sm text-[10px] uppercase tracking-widest text-gold bg-gold/5 border border-gold/20 hover:bg-gold hover:text-black transition-all font-sans font-bold"
           >
             <UploadCloud size={14} />
-            Push to Live Site
+            Push to Netlify
           </button>
         )}
 
