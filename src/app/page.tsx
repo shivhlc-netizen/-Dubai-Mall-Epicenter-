@@ -47,11 +47,6 @@ export default function Home() {
   }, [loaded]);
 
   const scrollTo = useCallback((id: string) => {
-    // If navigating to experience, redirect instead of scrolling
-    if (id === 'experience') {
-      window.location.href = '/experience';
-      return;
-    }
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
