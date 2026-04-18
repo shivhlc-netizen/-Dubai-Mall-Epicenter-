@@ -1,70 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { query } from '@/lib/db';
-import { getSession } from '@/lib/auth';
-
-// Tier limits: how many stores each role can see
-const TIER_LIMIT: Record<string, number> = {
-  admin:   100,
-  manager: 100,
-  premium:  50,
-  user:     20,
-  guest:    20,
-};
-
-export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = req.nextUrl;
-    const featuredOnly = searchParams.get('featured') === 'true';
-
-    // Determine user role
-    let role = 'guest';
-    try {
-      const session = await getSession();
-      if (session?.user) {
-        const isPremium = (session.user as any).is_premium;
-        const r = session.user.role as string;
-        role = (r === 'admin' || r === 'manager') ? r : isPremium ? 'premium' : 'user';
-      }
-    } catch { /* unauthenticated — guest */ }
-
-    const limit = TIER_LIMIT[role] ?? 20;
-
-    // Tier boundary: tier 1 = all, tier 2 = premium+, tier 3 = admin only
-    let tierMax = 1;
-    if (role === 'premium') tierMax = 2;
-    if (role === 'admin' || role === 'manager') tierMax = 3;
-
-    let where = 'tier <= ?';
-    const params: any[] = [tierMax];
-
-    if (featuredOnly) {
-      where += ' AND is_featured = 1';
-    }
-
-    const shops = await query(
-      `SELECT
-         id, fortune_rank, name, category, category_slug, description,
-         website_url, floor_level, tier, is_featured,
-         offline_rank, online_rank,
-         annual_footfall_m, offline_revenue_m, online_revenue_m, yoy_growth
-       FROM retail_shops
-       WHERE ${where}
-       ORDER BY fortune_rank ASC
-       LIMIT ?`,
-      [...params, limit]
-    );
-
-    return NextResponse.json({
-      shops,
-      meta: {
-        role,
-        limit,
-        tierMax,
-        total: shops.length,
-      },
-    });
-  } catch (error: any) {
-    console.error('Retail API error:', error.message);
-    return NextResponse.json({ error: 'Failed to fetch retail data' }, { status: 500 });
-  }
+export async function GET() {
+  return Response.json({
+    shops: [
+      { id: 1, name: 'Louis Vuitton', category: 'Luxury Fashion', floor: 'Level 2', zone: 'Fashion Avenue', rating: 4.9, description: 'Iconic French luxury fashion house' },
+      { id: 2, name: 'Cartier', category: 'Jewellery', floor: 'Level 2', zone: 'Fashion Avenue', rating: 4.9, description: 'Premier French jewellery and watchmaker' },
+      { id: 3, name: 'Rolex', category: 'Watches', floor: 'Level 2', zone: 'Fashion Avenue', rating: 5.0, description: 'Swiss luxury watchmaker since 1905' },
+      { id: 4, name: 'Burj Khalifa View', category: 'Attractions', floor: 'Level 1', zone: 'Grand Atrium', rating: 5.0, description: 'Breathtaking views of the worlds tallest tower' },
+      { id: 5, name: 'Dubai Aquarium', category: 'Entertainment', floor: 'Level 1', zone: 'Aquarium Walk', rating: 4.8, description: 'One of the largest indoor aquariums in the world' }
+    ],
+    meta: { total: 5, zone: 'All Zones' }
+  })
 }

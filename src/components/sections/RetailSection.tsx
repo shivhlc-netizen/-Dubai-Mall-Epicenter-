@@ -79,7 +79,7 @@ export default function RetailSection({ onExploreLeasing }: { onExploreLeasing: 
     fetch('/api/retail')
       .then(r => r.json())
       .then(d => { setShops(d.shops || []); setMeta(d.meta || null); setLoading(false); })
-      .catch(() => setLoading(false));
+      .catch(() => { setShops([]); setMeta(null); setLoading(false); });
   }, []);
 
   const categories = ['all', ...Array.from(new Set(shops.map(s => s.category_slug).filter(Boolean)))];

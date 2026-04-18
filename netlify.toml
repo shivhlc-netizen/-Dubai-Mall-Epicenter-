@@ -16,3 +16,10 @@
 
 [functions]
   directory = "netlify/functions"
+
+# Redirect all 404s to home for SPA-like behavior
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = "200"
+  force = false

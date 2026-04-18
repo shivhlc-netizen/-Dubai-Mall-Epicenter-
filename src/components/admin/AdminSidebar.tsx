@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
-import { ExternalLink, LogOut, UploadCloud } from 'lucide-react';
+import { Activity, ExternalLink, LogOut, UploadCloud } from 'lucide-react';
 import clsx from 'clsx';
 import { ADMIN_CATEGORIES } from '@/lib/menu-links';
 
@@ -86,8 +86,6 @@ export default function AdminSidebar() {
           Live Site
         </Link>
 
-import { Activity, ExternalLink, LogOut, UploadCloud, LayoutGrid } from 'lucide-react';
-...
         <Link
           href="https://github.com/shivhlc-netizen/-Dubai-Mall-Epicenter-/actions"
           target="_blank"

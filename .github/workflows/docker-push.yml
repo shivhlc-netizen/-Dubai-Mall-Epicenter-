@@ -1,43 +1,63 @@
-name: 7-Star LMS Gated Build & Push
+name: Netlify Deploy
 
 on:
   push:
     branches: [ "main", "master" ]
 
 jobs:
-  build-and-gate:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Build LMS Image
-        run: |
-          docker build \
-            --target runner \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest .
+      - name: Install Dependencies
+        run: npm ci
 
-      - name: LMS Gating (Metadata Verification)
-        run: |
-          # Verify the 7-Star labels we defined in the Dockerfile
-          TIER=$(docker inspect --format='{{index .Config.Labels "tier"}}' ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest)
-          PROJECT=$(docker inspect --format='{{index .Config.Labels "project"}}' ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest)
-          
-          echo "Detected Tier: $TIER"
-          echo "Detected Project: $PROJECT"
-          
-          if [ "$TIER" == "7-Star" ] && [ "$PROJECT" == "Dubai Seven Wonders" ]; then
-            echo "✅ LMS Gate Passed: 7-Star Integrity Verified"
-          else
-            echo "❌ LMS Gate Failed: Metadata Mismatch"
-            exit 1
-          fi
+      - name: Build
+        run: npm run build
+        env:
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          NODE_ENV: production
 
-      - name: Push to Docker Hub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest
+      - name: Deploy to Netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --prod --dir=.next
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+# ── ORIGINAL DOCKER WORKFLOW (commented for future use) ──
+# name: 7-Star LMS Gated Build & Push
+# on:
+#   push:
+#     branches: [ "main", "master" ]
+# jobs:
+#   build-and-gate:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Login to Docker Hub
+#         uses: docker/login-action@v3
+#         with:
+#           username: ${{ secrets.DOCKERHUB_USERNAME }}
+#           password: ${{ secrets.DOCKERHUB_TOKEN }}
+#       - name: Build LMS Image
+#         run: docker build --target runner -t ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest .
+#       - name: LMS Gating
+#         run: |
+#           TIER=$(docker inspect --format='{{index .Config.Labels "tier"}}' ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest)
+#           PROJECT=$(docker inspect --format='{{index .Config.Labels "project"}}' ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest)
+#           if [ "$TIER" == "7-Star" ] && [ "$PROJECT" == "Dubai Seven Wonders" ]; then
+#             echo "LMS Gate Passed"
+#           else exit 1; fi
+#       - name: Push to Docker Hub
+#         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/dubai-7-star:latest

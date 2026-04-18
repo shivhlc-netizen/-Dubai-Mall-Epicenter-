@@ -11,6 +11,7 @@ import LuxurySection from '@/components/sections/LuxurySection';
 import DiningSection from '@/components/sections/DiningSection';
 import AttractionsSection from '@/components/sections/AttractionsSection';
 import GallerySection from '@/components/sections/GallerySection';
+import PulseSection from '@/components/sections/PulseSection';
 import EventsSection from '@/components/sections/EventsSection';
 import WowFactsSection from '@/components/sections/WowFactsSection';
 import EventsModule from '@/components/modules/EventsModule';
@@ -110,6 +111,7 @@ export default function Home() {
         <RetailSection onExploreLeasing={() => setOpenModule('leasing')} />
         <LuxurySection />
         <DiningSection />
+        <PulseSection />
         <AttractionsSection />
         <GallerySection />
         <EventsSection

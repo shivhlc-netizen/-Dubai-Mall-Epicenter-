@@ -32,7 +32,7 @@ interface Experience {
 
 export default function ExperiencePage() {
   const { data: session } = useSession();
-  const isAdmin = session?.user.role === 'admin' || session?.user.role === 'manager';
+  const isAdmin = session?.user?.role === 'admin' || session?.user?.role === 'manager';
   
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [loading, setLoading] = useState(true);

@@ -45,7 +45,7 @@ export default function GallerySection({ isManaging }: { isManaging?: boolean })
       setTotalCount(all.total || 0);
       setStoryMeta({ title: story.title || '', narrative: story.narrative || '' });
       setLoading(false);
-    }).catch(() => setLoading(false));
+    }).catch(() => { setAllImages([]); setFeaturedImages([]); setLoading(false); });
   }, []);
 
   // Update lightbox image set when shift changes

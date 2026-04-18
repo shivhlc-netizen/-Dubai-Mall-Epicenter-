@@ -16,11 +16,11 @@ const HERO_STATS = [
 
 interface Props {
   onScrollDown: () => void;
-  isManaging: boolean;
-  onToggleManage: () => void;
+  isManaging?: boolean;
+  onToggleManage?: () => void;
 }
 
-export default function HeroSection({ onScrollDown, isManaging, onToggleManage }: Props) {
+export default function HeroSection({ onScrollDown, isManaging = false, onToggleManage = () => {} }: Props) {
   const { data: session } = useSession();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -96,7 +96,7 @@ export default function HeroSection({ onScrollDown, isManaging, onToggleManage }
       </div>
 
       {/* Cinematic Admin Floating Button */}
-      {session && (session.user.role === 'admin' || session.user.role === 'manager') && (
+      {session && (session?.user?.role === 'admin' || session?.user?.role === 'manager') && (
         <CinematicAdmin isManaging={isManaging} onToggleManage={onToggleManage} />
       )}
 

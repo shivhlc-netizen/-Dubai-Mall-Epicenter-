@@ -126,7 +126,7 @@ export default function Navigation({ active, onNavigate, onModuleOpen }: Props) 
           {/* Partner CTA */}
           <div className="hidden lg:flex items-center gap-4">
             {/* Museum of the Future — premium/admin only */}
-            {session && ((session.user as any).is_premium || session.user.role === 'admin') && (
+            {session && ((session.user as any)?.is_premium || session?.user?.role === 'admin') && (
               <a
                 href="http://localhost:5007"
                 target="_blank"
@@ -138,11 +138,11 @@ export default function Navigation({ active, onNavigate, onModuleOpen }: Props) 
             )}
             {session ? (
               <Link
-                href={session.user.role === 'admin' ? '/admin' : '/#experience'}
+                href={session?.user?.role === 'admin' ? '/admin' : '/#experience'}
                 className="flex items-center gap-2 text-gold text-[10px] tracking-widest uppercase font-sans px-4 py-2 border border-gold/20 hover:bg-gold/5 transition-all"
               >
                 <User size={14} />
-                {session.user.role === 'admin' ? 'Dashboard' : 'My 7★'}
+                {session?.user?.role === 'admin' ? 'Dashboard' : 'My 7★'}
               </Link>
             ) : (
               <div className="flex items-center gap-3">

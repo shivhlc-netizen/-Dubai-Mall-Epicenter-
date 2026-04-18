@@ -34,7 +34,8 @@ export default function StorytellingGallery({ isManaging }: { isManaging?: boole
       .then(data => {
         setItems(data.images || []);
         setLoading(false);
-      });
+      })
+      .catch(() => { setItems([]); setLoading(false); });
   }, []);
 
   useEffect(() => {
