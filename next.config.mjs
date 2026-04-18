@@ -21,12 +21,13 @@ const nextConfig = {
         {
           key: 'Content-Security-Policy',
           value: [
-            "default-src 'self'",
-            `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''}`,
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-            "font-src 'self' https://fonts.gstatic.com",
-            "img-src 'self' data: blob: https://images.unsplash.com https://plus.unsplash.com https://generativelanguage.googleapis.com",
+            "default-src 'self' https://*.netlify.app",
+            `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.netlify.app`,
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.netlify.app",
+            "font-src 'self' data: https://fonts.gstatic.com https://*.netlify.app",
+            "img-src 'self' data: blob: https://images.unsplash.com https://plus.unsplash.com https://generativelanguage.googleapis.com https://*.netlify.app https://*.googleusercontent.com",
             "connect-src 'self' https://generativelanguage.googleapis.com https://images.unsplash.com https://plus.unsplash.com https://*.netlify.app",
+            "frame-src 'self' https://*.netlify.app",
           ].join('; '),
         },
       ],

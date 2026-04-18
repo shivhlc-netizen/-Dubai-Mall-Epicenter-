@@ -2,11 +2,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Layers, Maximize2, Trash2, Star, GitMerge, CheckCircle, RefreshCcw } from 'lucide-react';
+import { GALLERY_DATA } from '@/lib/data';
 
 interface GalleryImage {
-  id: number; path: string; title: string; description: string;
-  story: string; emotional_hook: string; shift_style: string;
-  category_name: string; category_slug: string; featured: number;
+  id: number; url: string; title: string; description: string;
+  story?: string; emotional_hook?: string; shift_style?: string;
+  category_name?: string; category_slug?: string; is_featured?: boolean;
+  featured?: number;
   media_type: 'image' | 'video';
 }
 
@@ -35,17 +37,20 @@ export default function GallerySection({ isManaging }: { isManaging?: boolean })
   const filmRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    Promise.all([
-      fetch('/api/gallery?limit=1000').then(r => r.json()),
-      fetch('/api/gallery?featured=1&limit=100').then(r => r.json()),
-      fetch('/api/gallery/story').then(r => r.json()),
-    ]).then(([all, featured, story]) => {
-      setAllImages(all.images || []);
-      setFeaturedImages(featured.images || []);
-      setTotalCount(all.total || 0);
-      setStoryMeta({ title: story.title || '', narrative: story.narrative || '' });
-      setLoading(false);
-    }).catch(() => { setAllImages([]); setFeaturedImages([]); setLoading(false); });
+    // Static payload for high stability on Netlify
+    const images = (GALLERY_DATA as any[]).map(img => ({
+      ...img,
+      featured: img.is_featured ? 1 : 0
+    })) as GalleryImage[];
+    
+    setAllImages(images);
+    setFeaturedImages(images.filter(img => img.is_featured));
+    setTotalCount(images.length);
+    setStoryMeta({ 
+      title: 'The Epicenter Chronicles', 
+      narrative: 'A visual journey through the heart of Dubai Mall — from the crystalline waterfalls to the fashion-forward avenues.' 
+    });
+    setLoading(false);
   }, []);
 
   // Update lightbox image set when shift changes
@@ -173,7 +178,7 @@ export default function GallerySection({ isManaging }: { isManaging?: boolean })
               <motion.div key={spotIdx} initial={{opacity:0,scale:1.04}} animate={{opacity:1,scale:1}}
                 exit={{opacity:0}} transition={{duration:1.2}} className="absolute inset-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={spotImages[spotIdx]?.path} alt="" className="w-full h-full object-cover" />
+                <img src={spotImages[spotIdx]?.url} alt="" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
               </motion.div>
@@ -232,7 +237,7 @@ export default function GallerySection({ isManaging }: { isManaging?: boolean })
                   <div className="flex-shrink-0 w-full md:w-[56%] cursor-pointer group relative overflow-hidden border border-gold/8"
                     onClick={()=>setLightbox(i)}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img.path} alt={img.title}
+                    <img src={img.url} alt={img.title}
                       className="w-full aspect-[4/3] object-cover group-hover:scale-[1.03] transition-transform duration-700"/>
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center">
                       <Maximize2 size={18} className="text-white opacity-0 group-hover:opacity-70 transition-opacity"/>
@@ -276,7 +281,7 @@ export default function GallerySection({ isManaging }: { isManaging?: boolean })
                       transition={{delay:(i%10)*0.03}} onClick={()=>setLightbox(i)}
                       className={`flex-shrink-0 ${ws[i%5]} ${hs[i%5]} relative group cursor-pointer overflow-hidden border border-gold/8 hover:border-gold/40 transition-all`}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img.path} alt={img.title} className="w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-700"/>
+                      <img src={img.url} alt={img.title} className="w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-700"/>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"/>
                       <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                         <p className="text-white text-xs font-sans truncate font-medium">{img.title}</p>
@@ -326,9 +331,9 @@ export default function GallerySection({ isManaging }: { isManaging?: boolean })
                   className="break-inside-avoid mb-3 cursor-pointer group relative overflow-hidden border border-gold/5 hover:border-gold/25 transition-colors duration-500"
                   onClick={()=>setLightbox(i)}>
                   {img.media_type === 'video' ? (
-                    <video src={img.path} className="w-full object-cover group-hover:scale-[1.04] transition-transform duration-700 block" autoPlay muted loop playsInline />
+                    <video src={img.url} className="w-full object-cover group-hover:scale-[1.04] transition-transform duration-700 block" autoPlay muted loop playsInline />
                   ) : (
-                    <img src={img.path} alt={img.title} className="w-full object-cover group-hover:scale-[1.04] transition-transform duration-700 block"/>
+                    <img src={img.url} alt={img.title} className="w-full object-cover group-hover:scale-[1.04] transition-transform duration-700 block"/>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400"/>
                   <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
@@ -398,7 +403,7 @@ export default function GallerySection({ isManaging }: { isManaging?: boolean })
                 onClick={()=>setLightbox(0)}>
                 <div className="relative overflow-hidden" style={{height:'60vh'}}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={allImages[0].path} alt={allImages[0].title}
+                  <img src={allImages[0].url} alt={allImages[0].title}
                     className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-1000"/>
                 </div>
                 <div className="p-10 lg:p-16 flex flex-col justify-center bg-[#070707] border-l border-gold/8">
@@ -417,7 +422,7 @@ export default function GallerySection({ isManaging }: { isManaging?: boolean })
                   className="cursor-pointer group" onClick={()=>setLightbox(i+1)}>
                   <div className="relative overflow-hidden mb-4 border border-gold/5 group-hover:border-gold/30 transition-colors">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img.path} alt={img.title}
+                    <img src={img.url} alt={img.title}
                       className="w-full aspect-[3/4] object-cover group-hover:scale-[1.05] transition-transform duration-700"/>
                     {img.emotional_hook&&(
                       <div className="absolute top-3 right-3 text-[8px] uppercase tracking-widest bg-black/70 text-gold/55 px-2 py-1 font-sans">{img.emotional_hook}</div>
@@ -434,7 +439,7 @@ export default function GallerySection({ isManaging }: { isManaging?: boolean })
                 <div key={img.id} className="cursor-pointer group relative overflow-hidden border border-gold/5 hover:border-gold/25 transition-colors"
                   onClick={()=>setLightbox(i+13)}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img.path} alt={img.title}
+                  <img src={img.url} alt={img.title}
                     className="w-full aspect-square object-cover group-hover:scale-[1.05] transition-transform duration-500"/>
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-end p-3">
                     <p className="text-white text-xs font-sans opacity-0 group-hover:opacity-100 transition-opacity font-medium">{img.title}</p>
@@ -453,14 +458,14 @@ export default function GallerySection({ isManaging }: { isManaging?: boolean })
             className="fixed inset-0 z-[200] bg-black/97 backdrop-blur-xl flex items-center justify-center"
             onClick={()=>setLightbox(null)}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={lightboxImg.path} alt="" className="absolute inset-0 w-full h-full object-cover opacity-5 blur-3xl scale-110 pointer-events-none"/>
+            <img src={lightboxImg.url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-5 blur-3xl scale-110 pointer-events-none"/>
             <motion.div key={lightbox} initial={{opacity:0,scale:0.94}} animate={{opacity:1,scale:1}} transition={{duration:0.3}}
               className="relative z-10 flex flex-col items-center max-w-5xl w-full px-16 max-h-[90vh]"
               onClick={e=>e.stopPropagation()}>
               {lightboxImg.media_type === 'video' ? (
-                <video src={lightboxImg.path} className="max-h-[70vh] max-w-full object-contain" controls autoPlay />
+                <video src={lightboxImg.url} className="max-h-[70vh] max-w-full object-contain" controls autoPlay />
               ) : (
-                <img src={lightboxImg.path} alt={lightboxImg.title} className="max-h-[70vh] max-w-full object-contain"/>
+                <img src={lightboxImg.url} alt={lightboxImg.title} className="max-h-[70vh] max-w-full object-contain"/>
               )}              <div className="mt-5 text-center max-w-xl">
                 {lightboxImg.emotional_hook&&<p className="text-gold/45 text-[9px] uppercase tracking-[0.6em] font-sans mb-2">{lightboxImg.emotional_hook}</p>}
                 <h3 className="font-display text-xl text-white mb-2">{lightboxImg.title}</h3>
