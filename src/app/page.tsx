@@ -4,19 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import SectionDots from '@/components/ui/SectionDots';
 import HeroSection from '@/components/sections/HeroSection';
-import WhySection from '@/components/sections/WhySection';
-import LiveCounter from '@/components/ui/LiveCounter';
-import RetailSection from '@/components/sections/RetailSection';
-import LuxurySection from '@/components/sections/LuxurySection';
-import DiningSection from '@/components/sections/DiningSection';
-import AttractionsSection from '@/components/sections/AttractionsSection';
 import GallerySection from '@/components/sections/GallerySection';
-import PulseSection from '@/components/sections/PulseSection';
-import EventsSection from '@/components/sections/EventsSection';
 import WowFactsSection from '@/components/sections/WowFactsSection';
-import EventsModule from '@/components/modules/EventsModule';
-import SponsorshipModule from '@/components/modules/SponsorshipModule';
-import LeasingModule from '@/components/modules/LeasingModule';
 import FountainDivider from '@/components/ui/FountainDivider';
 import { SECTIONS } from '@/lib/data';
 
@@ -29,11 +18,13 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const [greeting, setGreeting] = useState('Welcome');
 
+  // Filter sections to focus only on stable core ones
+  const FOCUSED_SECTIONS = SECTIONS.filter(s => ['hero', 'gallery', 'wow'].includes(s.id));
+
   useEffect(() => {
     setHasMounted(true);
     setLoaded(true);
     
-    // Auto-authorize in dev
     if (process.env.NODE_ENV === 'development') {
       setIsAuthorized(true);
     }
@@ -44,163 +35,87 @@ export default function Home() {
     else setGreeting('Good Evening');
   }, []);
 
-  // Prevent hydration mismatch by returning null until mounted
   if (!hasMounted) return <div className="fixed inset-0 bg-black" />;
 
+  // Password Guard (Stable)
   if (!isAuthorized && process.env.NODE_ENV === 'production') {
     return (
-      <div className="fixed inset-0 z-[1000] bg-black flex items-center justify-center p-6 font-sans">
-        <div className="max-w-md w-full text-center">
-          <h1 className="font-display text-2xl text-gold mb-4 uppercase tracking-[0.3em]">Access Restricted</h1>
-          <p className="text-white/40 text-xs font-sans mb-8 tracking-widest uppercase">The Epicenter Phase 1 — Private Preview</p>
-          <input 
-            type="password" 
-            placeholder="ENTER ACCESS KEY" 
-            className="w-full bg-white/5 border border-gold/20 p-4 text-white text-center font-sans tracking-[0.5em] focus:outline-none focus:border-gold transition-colors mb-4"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && password === 'DUBAI2026' && setIsAuthorized(true)}
-          />
+      <div className="fixed inset-0 z-[1000] bg-[#050505] flex items-center justify-center p-6 font-sans">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full text-center"
+        >
+          <div className="mb-12">
+            <h1 className="font-display text-3xl text-gold mb-2 uppercase tracking-[0.3em]">The Epicenter</h1>
+            <p className="text-white/20 text-[10px] font-sans tracking-[0.5em] uppercase">Private Executive Preview</p>
+          </div>
+          
+          <div className="relative group mb-6">
+            <input 
+              type="password" 
+              placeholder="ACCESS KEY" 
+              className="w-full bg-white/5 border border-gold/10 p-5 text-white text-center font-sans tracking-[0.8em] focus:outline-none focus:border-gold/40 transition-all rounded-sm placeholder:tracking-widest"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && password === 'DUBAI2026' && setIsAuthorized(true)}
+            />
+            <div className="absolute inset-0 border border-gold/20 scale-105 opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
+          </div>
+
           <button 
-            onClick={() => password === 'DUBAI2026' && setIsAuthorized(true)}
-            className="text-[10px] text-gold/60 uppercase tracking-widest hover:text-gold transition-colors"
+            onClick={() => {
+              if (password === 'DUBAI2026') setIsAuthorized(true);
+              else alert('Invalid Access Key');
+            }}
+            className="text-[10px] text-gold/40 uppercase tracking-[0.4em] hover:text-gold transition-colors py-2"
           >
-            Authenticate
+            Authorize Entry
           </button>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
-  // Observers for scroll
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-    SECTIONS.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
-        { threshold: 0.4 }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
-    return () => observers.forEach((o) => o.disconnect());
-  }, []);
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const scrollTo = useCallback((id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const scrollToNext = useCallback(() => {
-    const idx = SECTIONS.findIndex(s => s.id === activeSection);
-    const next = SECTIONS[idx + 1];
-    if (next) scrollTo(next.id);
-  }, [activeSection, scrollTo]);
-
   return (
     <>
-      {/* Loading screen */}
       <AnimatePresence>
         {!loaded && (
           <motion.div
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
             className="fixed inset-0 z-[999] bg-[#050505] flex flex-col items-center justify-center"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center"
-            >
-              <div className="font-display text-2xl tracking-[0.3em] uppercase text-white mb-1">The Dubai Mall</div>
-              <div className="text-[9px] tracking-[0.7em] uppercase text-gold font-sans">The Epicenter</div>
-            </motion.div>
-            <div className="mt-8 w-48 h-px bg-[#1a1a1a] overflow-hidden">
-              <motion.div
-                initial={{ x: '-100%' }}
-                animate={{ x: '100%' }}
-                transition={{ duration: 1.2, ease: 'easeInOut', repeat: Infinity }}
-                className="h-full bg-gradient-to-r from-transparent via-gold to-transparent"
-              />
-            </div>
+            <div className="font-display text-2xl tracking-[0.3em] uppercase text-white mb-1 text-shimmer-gold">The Dubai Mall</div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Nav */}
-      <Navigation
-        active={activeSection}
-        onNavigate={scrollTo}
-        onModuleOpen={setOpenModule}
-      />
+      <Navigation active={activeSection} onNavigate={(id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })} onModuleOpen={setOpenModule} />
+      <SectionDots active={activeSection} onNavigate={(id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })} />
 
-      {/* Section dots */}
-      <SectionDots active={activeSection} onNavigate={scrollTo} />
+      <main className="bg-[#050505]">
+        <HeroSection onScrollDown={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })} greeting={greeting} />
+        
+        <FountainDivider />
+        
+        <section id="gallery" className="relative bg-[#050505]">
+          <GallerySection />
+        </section>
 
-      {/* Main content */}
-      <main>
-        <HeroSection onScrollDown={scrollToNext} greeting={greeting} />
-        <WhySection />
         <FountainDivider />
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-          <LiveCounter />
-        </div>
-        <RetailSection onExploreLeasing={() => setOpenModule('leasing')} />
-        <FountainDivider />
-        <LuxurySection />
-        <DiningSection />
-        <FountainDivider />
-        <PulseSection />
-        <AttractionsSection />
-        <GallerySection />
-        <FountainDivider />
-        <EventsSection
-          onEventsModule={() => setOpenModule('events')}
-          onSponsorModule={() => setOpenModule('sponsorship')}
-        />
-        <WowFactsSection />
+
+        <section id="wow" className="relative bg-[#050505]">
+          <WowFactsSection />
+        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#050505] border-t border-gold/10 py-12 px-6 lg:px-10">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
-            <div>
-              <div className="font-display text-xl tracking-[0.2em] uppercase text-white mb-1">The Dubai Mall</div>
-              <div className="text-[9px] tracking-[0.5em] uppercase text-gold font-sans">The Epicenter</div>
-            </div>
-            <div className="grid grid-cols-3 gap-x-12 gap-y-3 text-[11px] tracking-widest uppercase text-white/30 font-sans">
-              {['Overview', 'Retail', 'Luxury', 'Dining', 'Attractions', 'Events'].map(s => (
-                <button key={s} onClick={() => scrollTo(s.toLowerCase())} className="text-left hover:text-gold transition-colors">
-                  {s}
-                </button>
-              ))}
-            </div>
-            <div className="flex flex-col gap-2 text-[11px] font-sans text-white/30">
-              <button onClick={() => setOpenModule('events')} className="hover:text-gold transition-colors">Host an Event</button>
-              <button onClick={() => setOpenModule('sponsorship')} className="hover:text-gold transition-colors">Sponsorship</button>
-              <button onClick={() => setOpenModule('leasing')} className="hover:text-gold transition-colors">Leasing</button>
-            </div>
-          </div>
-          <div className="border-t border-gold/8 pt-6 flex flex-col md:flex-row justify-between gap-4">
-            <p className="text-[10px] text-white/20 font-sans tracking-wider">
-              © {new Date().getFullYear()} Emaar Malls. The Dubai Mall — Downtown Dubai, UAE.
-            </p>
-            <p className="text-[10px] text-white/20 font-sans tracking-wider">
-              Built for Phase 1 Presentation · Deployable on Netlify
-            </p>
-          </div>
-        </div>
+      <footer className="bg-[#050505] border-t border-gold/10 py-20 px-6 text-center">
+        <div className="font-display text-xl tracking-[0.2em] uppercase text-white mb-2 text-shimmer-gold">The Dubai Mall</div>
+        <div className="text-[9px] tracking-[0.5em] uppercase text-gold/40 font-sans mb-10">The Epicenter</div>
+        <p className="text-[10px] text-white/10 font-sans tracking-widest uppercase">
+          © 2026 Emaar Malls · Phase 1 Stable Build
+        </p>
       </footer>
-
-      {/* Phase 2 Modules */}
-      <EventsModule open={openModule === 'events'} onClose={() => setOpenModule(null)} />
-      <SponsorshipModule open={openModule === 'sponsorship'} onClose={() => setOpenModule(null)} />
-      <LeasingModule open={openModule === 'leasing'} onClose={() => setOpenModule(null)} />
     </>
   );
 }
