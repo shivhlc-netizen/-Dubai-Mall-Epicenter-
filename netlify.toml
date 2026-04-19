@@ -7,18 +7,130 @@
   NEXT_TELEMETRY_DISABLED = "1"
   NEXTAUTH_URL = "https://dubai-mall-epicenter.netlify.app"
 
+[dev]
+  command = "npm run dev"
+  port = 3000
+  targetPort = 3000
+  autoLaunch = false
+
+# ─── Plugins ─────────────────────────────────────────────────────────────────
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# ─── Functions (v1 + v2 coexist in same directory) ───────────────────────────
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# v1 Scheduled Functions (existing)
+[functions."cron-gemini-pulse"]
+  schedule = "0 0 * * 2,5"        # Tuesday + Friday midnight UTC
+
+[functions."resilient-automation"]
+  schedule = "@daily"              # Every day midnight UTC
+
+# v2 Scheduled Functions (new)
+[functions."send-weekly-digest"]
+  schedule = "0 9 * * 1"          # Monday 9am UTC
+
+[functions."cleanup-expired-tokens"]
+  schedule = "0 2 * * *"          # Daily 2am UTC
+
+[functions."refresh-pulse-cache"]
+  schedule = "0 */6 * * *"        # Every 6 hours
+
+# ─── Edge Functions ───────────────────────────────────────────────────────────
+[edge_functions]
+  directory = "netlify/edge-functions"
+
+[[edge_functions]]
+  function = "geo-welcome"
+  path = "/"
+
+[[edge_functions]]
+  function = "api-ratelimit"
+  path = "/api/*"
+
+# ─── Headers ─────────────────────────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
 [[headers]]
   for = "/api/*"
   [headers.values]
     Cache-Control = "no-store"
+    X-Robots-Tag = "noindex"
 
-[functions]
-  directory = "netlify/functions"
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
-[functions."cron-gemini-pulse"]
-  schedule = "0 0 * * 2,5" # Tuesday and Friday at 00:00 UTC
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, s-maxage=2592000"
 
-[functions."resilient-automation"]
-  schedule = "@daily"
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://dubai-mall-epicenter.netlify.app"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
 
-# Next.js plugin handles all routing — no manual redirects needed
+# ─── Redirects ───────────────────────────────────────────────────────────────
+[[redirects]]
+  from = "/mall"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/shop"
+  to = "/#directory"
+  status = 302
+
+[[redirects]]
+  from = "/dining"
+  to = "/#directory"
+  status = 302
+
+[[redirects]]
+  from = "/luxury"
+  to = "/#directory"
+  status = 302
+
+[[redirects]]
+  from = "/events"
+  to = "/#directory"
+  status = 302
+
+# v2 function short-URL aliases
+[[redirects]]
+  from = "/api/fn/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# ─── Image CDN ───────────────────────────────────────────────────────────────
+[images]
+  remote_images = [
+    "https://images.unsplash.com",
+    "https://plus.unsplash.com"
+  ]
+
+# ─── Context overrides ───────────────────────────────────────────────────────
+[context.production.environment]
+  NODE_ENV = "production"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "development"
+
+[context.branch-deploy.environment]
+  NODE_ENV = "development"
