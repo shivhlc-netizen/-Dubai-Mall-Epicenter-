@@ -244,20 +244,30 @@ function LoginForm() {
             <Link href="/signup" className="text-gold hover:underline">Create an account</Link>
           </p>
 
-          {/* Quick Login for Admin (Dev only) */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-10 pt-6 border-t border-white/5 text-center">
+          {/* Quick Access Modes */}
+          <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
+            <p className="text-[9px] tracking-[0.4em] uppercase text-white/20 text-center mb-4 font-sans">Corporate Quick Access</p>
+            <div className="grid grid-cols-1 gap-2">
               <button
-                onClick={() => {
-                  setEmail('shivshambhuchoudhary@gmail.com');
-                  setPassword('S#iv2026');
-                }}
-                className="text-[10px] text-gold/40 hover:text-gold uppercase tracking-widest transition-colors"
+                onClick={() => { setEmail('admin@dubaimall.ae'); setPassword('S#iv2026'); }}
+                className="w-full py-2 bg-gold/5 border border-gold/10 text-gold/60 text-[9px] tracking-widest uppercase hover:bg-gold hover:text-black transition-all rounded-sm"
               >
-                Auto-fill Admin Access
+                1. Admin Mode
+              </button>
+              <button
+                onClick={() => { setEmail('hlc@dubaimall.ae'); setPassword('HLC2026'); }}
+                className="w-full py-2 bg-white/5 border border-white/10 text-white/40 text-[9px] tracking-widest uppercase hover:bg-white/20 hover:text-white transition-all rounded-sm"
+              >
+                2. HLC Mode
+              </button>
+              <button
+                onClick={() => { setEmail('shivshambhu@dubaimall.ae'); setPassword('Premium2026'); }}
+                className="w-full py-2 bg-blue-500/5 border border-blue-500/10 text-blue-400/60 text-[9px] tracking-widest uppercase hover:bg-blue-500 hover:text-white transition-all rounded-sm"
+              >
+                3. Shiv Shambhu Premium
               </button>
             </div>
-          )}
+          </div>
         </div>
 
         <p className="text-center text-white/15 text-[10px] font-sans mt-6">

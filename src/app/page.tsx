@@ -8,6 +8,7 @@ import ProjectDirectory from '@/components/sections/ProjectDirectory';
 import GallerySection from '@/components/sections/GallerySection';
 import WowFactsSection from '@/components/sections/WowFactsSection';
 import FountainDivider from '@/components/ui/FountainDivider';
+import AdminControlHub from '@/components/admin/AdminControlHub';
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState('hero');
@@ -15,6 +16,7 @@ export default function Home() {
   const [loaded, setLoaded] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const [greeting, setGreeting] = useState('Welcome');
+  const [showFountains, setShowFountains] = useState(true);
 
   useEffect(() => {
     setHasMounted(true);
@@ -74,13 +76,13 @@ export default function Home() {
         
         <ProjectDirectory />
         
-        <FountainDivider />
+        {showFountains && <FountainDivider />}
         
         <section id="gallery" className="relative bg-[#050505]">
           <GallerySection />
         </section>
 
-        <FountainDivider />
+        {showFountains && <FountainDivider />}
 
         <section id="wow" className="relative bg-[#050505]">
           <WowFactsSection />
@@ -94,6 +96,11 @@ export default function Home() {
           © 2026 Emaar Malls · Phase 1 Cinematic Build
         </p>
       </footer>
+
+      <AdminControlHub 
+        showFountains={showFountains} 
+        onToggleFountains={setShowFountains} 
+      />
     </>
   );
 }
