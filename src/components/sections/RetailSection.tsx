@@ -240,7 +240,7 @@ export default function RetailSection({ onExploreLeasing }: { onExploreLeasing: 
 
                       {/* Footfall */}
                       <div className="hidden md:block text-right flex-shrink-0 w-28">
-                        <div className={`font-display text-sm ${rc.text}`}>{shop.annual_footfall_m.toFixed(1)}M</div>
+                        <div className={`font-display text-sm ${rc.text}`}>{(shop.annual_footfall_m || 0).toFixed(1)}M</div>
                         <div className="text-[9px] text-white/25 font-sans">annual visitors</div>
                       </div>
 
@@ -374,7 +374,7 @@ export default function RetailSection({ onExploreLeasing }: { onExploreLeasing: 
                   <div className="text-white/25 text-[10px] font-sans">{shop.category}</div>
                   <div className="flex items-center gap-1 mt-3 text-[9px] font-sans text-white/20">
                     <TrendingUp size={8}/>
-                    <span>+{shop.yoy_growth.toFixed(1)}% YoY</span>
+                    <span>+{(shop.yoy_growth || 0).toFixed(1)}% YoY</span>
                     <span className="ml-auto flex items-center gap-0.5">
                       <ExternalLink size={8}/> Visit
                     </span>
