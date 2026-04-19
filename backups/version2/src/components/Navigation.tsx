@@ -10,11 +10,6 @@ import { useSession } from 'next-auth/react';
 // Only use the stable core sections
 const FOCUSED_SECTIONS = [
   { id: 'hero', label: 'Home' },
-  { id: 'why', label: 'Overview' },
-  { id: 'retail', label: 'Retail' },
-  { id: 'dining', label: 'Dining' },
-  { id: 'attractions', label: 'Attractions' },
-  { id: 'events', label: 'Events' },
   { id: 'directory', label: 'Directory' },
   { id: 'gallery', label: 'Gallery' },
   { id: 'wow', label: 'Wow Facts' }

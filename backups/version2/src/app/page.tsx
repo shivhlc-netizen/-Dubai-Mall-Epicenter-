@@ -4,11 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import SectionDots from '@/components/ui/SectionDots';
 import HeroSection from '@/components/sections/HeroSection';
-import WhySection from '@/components/sections/WhySection';
-import RetailSection from '@/components/sections/RetailSection';
-import DiningSection from '@/components/sections/DiningSection';
-import AttractionsSection from '@/components/sections/AttractionsSection';
-import EventsSection from '@/components/sections/EventsSection';
 import ProjectDirectory from '@/components/sections/ProjectDirectory';
 import GallerySection from '@/components/sections/GallerySection';
 import WowFactsSection from '@/components/sections/WowFactsSection';
@@ -33,7 +28,7 @@ export default function Home() {
     else setGreeting('Good Evening');
 
     const observers: IntersectionObserver[] = [];
-    const sections = ['hero', 'why', 'retail', 'dining', 'attractions', 'events', 'directory', 'gallery', 'wow'];
+    const sections = ['hero', 'directory', 'gallery', 'wow'];
 
     sections.forEach((id) => {
       const el = document.getElementById(id);
@@ -77,27 +72,7 @@ export default function Home() {
       <SectionDots active={activeSection} onNavigate={scrollTo} />
 
       <main className="bg-[#050505]">
-        <HeroSection onScrollDown={() => scrollTo('why')} greeting={greeting} />
-        
-        <WhySection />
-
-        {showFountains && <FountainDivider />}
-
-        <RetailSection onExploreLeasing={() => scrollTo('events')} />
-
-        {showFountains && <FountainDivider />}
-
-        <DiningSection />
-
-        {showFountains && <FountainDivider />}
-
-        <AttractionsSection />
-
-        {showFountains && <FountainDivider />}
-
-        <EventsSection onEventsModule={() => setOpenModule('events')} onSponsorModule={() => setOpenModule('sponsorship')} />
-
-        {showFountains && <FountainDivider />}
+        <HeroSection onScrollDown={() => scrollTo('directory')} greeting={greeting} />
         
         <ProjectDirectory />
         

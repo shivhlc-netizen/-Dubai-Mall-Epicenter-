@@ -1,0 +1,24 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+  NEXTAUTH_URL = "https://dubai-mall-epicenter.netlify.app"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store"
+
+[functions]
+  directory = "netlify/functions"
+
+[functions."cron-gemini-pulse"]
+  schedule = "0 0 * * 2,5" # Tuesday and Friday at 00:00 UTC
+
+[functions."resilient-automation"]
+  schedule = "@daily"
+
+# Next.js plugin handles all routing — no manual redirects needed
