@@ -18,7 +18,7 @@ const { chromium } = require('@playwright/test');
 
   console.log('Capturing live site...');
   try {
-    await page.goto('https://dubai-mall-epicenter.netlify.app/', { waitUntil: 'networkidle', timeout: 30000 });
+    await page.goto('https://69e444e3cd9269f9cb692b1f--dubai-mall-s.netlify.app/', { waitUntil: 'networkidle', timeout: 30000 });
     await page.waitForTimeout(5000);
     await page.screenshot({ path: 'image/live_site.png', fullPage: false });
     console.log('✓ Live site captured.');
