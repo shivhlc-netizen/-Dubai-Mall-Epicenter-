@@ -25,28 +25,34 @@ export default function Home() {
 
   useEffect(() => {
     setHasMounted(true);
-    setLoaded(true);
     
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good Morning');
-    else if (hour < 17) setGreeting('Good Afternoon');
-    else setGreeting('Good Evening');
+    // Defer non-critical logic
+    const timer = setTimeout(() => {
+      setLoaded(true);
+      
+      const hour = new Date().getHours();
+      if (hour < 12) setGreeting('Good Morning');
+      else if (hour < 17) setGreeting('Good Afternoon');
+      else setGreeting('Good Evening');
 
-    const observers: IntersectionObserver[] = [];
-    const sections = ['hero', 'why', 'retail', 'dining', 'attractions', 'events', 'directory', 'gallery', 'wow'];
+      const observers: IntersectionObserver[] = [];
+      const sections = ['hero', 'why', 'retail', 'dining', 'attractions', 'events', 'directory', 'gallery', 'wow'];
 
-    sections.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
-        { threshold: 0.4 }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
+      sections.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const obs = new IntersectionObserver(
+          ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+          { threshold: 0.4 }
+        );
+        obs.observe(el);
+        observers.push(obs);
+      });
 
-    return () => observers.forEach((o) => o.disconnect());
+      return () => observers.forEach((o) => o.disconnect());
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, []);
 
   if (!hasMounted) return <div className="fixed inset-0 bg-black" />;
