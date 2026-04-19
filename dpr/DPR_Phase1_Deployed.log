@@ -1,25 +1,24 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.7.2)  18 APR 2026 21:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.7.2)  19 APR 2026 09:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**./DPR_Full.tex
-(DPR_Full.tex
+**./DPR_Phase1_Deployed.tex
+(DPR_Phase1_Deployed.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/base\report.cls
-Document Class: report 2023/05/17 v1.4n Standard LaTeX document class
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
-File: size12.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
+(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/base\size11.clo
+File: size11.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
 )
 \c@part=\count187
-\c@chapter=\count188
-\c@section=\count189
-\c@subsection=\count190
-\c@subsubsection=\count191
-\c@paragraph=\count192
-\c@subparagraph=\count193
-\c@figure=\count194
-\c@table=\count195
+\c@section=\count188
+\c@subsection=\count189
+\c@subsubsection=\count190
+\c@paragraph=\count191
+\c@subparagraph=\count192
+\c@figure=\count193
+\c@table=\count194
 \abovecaptionskip=\skip48
 \belowcaptionskip=\skip49
 \bibindent=\dimen140
@@ -45,9 +44,9 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
 Package: iftex 2022/02/03 v1.0f TeX engine tests
 ))
-\Gm@cnth=\count196
-\Gm@cntv=\count197
-\c@Gm@tempcnt=\count198
+\Gm@cnth=\count195
+\Gm@cntv=\count196
+\c@Gm@tempcnt=\count197
 \Gm@bindingoffset=\dimen141
 \Gm@wd@mp=\dimen142
 \Gm@odd@mp=\dimen143
@@ -111,15 +110,15 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count199
+\c@section@level=\count198
 )
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
 Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count266
+\etb@tempcnta=\count199
 )
 \@linkdim=\dimen149
-\Hy@linkcounter=\count267
-\Hy@pagecounter=\count268
+\Hy@linkcounter=\count266
+\Hy@pagecounter=\count267
 
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2023-11-26 v7.01g Hyperref: PDFDocEncoding definition (HO)
@@ -129,7 +128,7 @@ Now handling font encoding PD1 ...
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count269
+\Hy@SavedSpaceFactor=\count268
 
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2023-11-26 v7.01g Hyperref: PDF Unicode definition (HO)
@@ -143,7 +142,7 @@ Package hyperref Info: Plain pages OFF on input line 4196.
 Package hyperref Info: Backreferencing OFF on input line 4201.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4448.
-\c@Hy@tempcnt=\count270
+\c@Hy@tempcnt=\count269
 
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip16
@@ -160,7 +159,7 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count271
+\Fld@menulength=\count270
 \Field@Width=\dimen151
 \Fld@charsize=\dimen152
 Package hyperref Info: Hyper figures OFF on input line 6065.
@@ -175,9 +174,9 @@ Package hyperref Info: PDF/A mode OFF on input line 6095.
 Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
 package with kernel methods
 )
-\Hy@abspage=\count272
-\c@Item=\count273
-\c@Hfootnote=\count274
+\Hy@abspage=\count271
+\c@Item=\count272
+\c@Hfootnote=\count273
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
@@ -188,8 +187,8 @@ Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
 kage
 with kernel methods
 )
-\Fld@listcount=\count275
-\c@bookmark@seq@number=\count276
+\Fld@listcount=\count274
+\c@bookmark@seq@number=\count275
 
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
 echeck.sty
@@ -222,8 +221,8 @@ Package: enumitem 2025/02/06 v3.11 Customized lists
 \enit@outerparindent=\dimen158
 \enit@toks=\toks22
 \enit@inbox=\box52
-\enit@count@id=\count277
-\enitdp@description=\count278
+\enit@count@id=\count276
+\enitdp@description=\count277
 )
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2023/11/15 v3.01 LaTeX color extensions (UK)
@@ -263,81 +262,33 @@ Package graphics Info: Driver file: pdftex.def on input line 107.
 \Gin@req@height=\dimen159
 \Gin@req@width=\dimen160
 )
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
-\lst@mode=\count279
-\lst@gtempboxa=\box53
-\lst@token=\toks23
-\lst@length=\count280
-\lst@currlwidth=\dimen161
-\lst@column=\count281
-\lst@pos=\count282
-\lst@lostspace=\dimen162
-\lst@width=\dimen163
-\lst@newlines=\count283
-\lst@lineno=\count284
-\lst@maxwidth=\dimen164
-
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
-File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
-\c@lstnumber=\count285
-\lst@skipnumbers=\count286
-\lst@framebox=\box54
-)
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
-File: listings.cfg 2023/02/27 1.9 listings configuration
-))
-Package: listings 2023/02/27 1.9 (Carsten Heinz)
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
-Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
-
-\f@nch@headwidth=\skip54
-\f@nch@offset@elh=\skip55
-\f@nch@offset@erh=\skip56
-\f@nch@offset@olh=\skip57
-\f@nch@offset@orh=\skip58
-\f@nch@offset@elf=\skip59
-\f@nch@offset@erf=\skip60
-\f@nch@offset@olf=\skip61
-\f@nch@offset@orf=\skip62
-\f@nch@height=\skip63
-\f@nch@footalignment=\skip64
-\f@nch@widthL=\skip65
-\f@nch@widthC=\skip66
-\f@nch@widthR=\skip67
-\@temptokenb=\toks24
-)
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
-Package: setspace 2022/12/04 v6.7b set line spacing
-)
-Package hyperref Info: Option `colorlinks' set `true' on input line 29.
-
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
 tex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count287
-\l__pdf_internal_box=\box55
-)
-No file DPR_Full.aux.
-\openout1 = `DPR_Full.aux'.
+\l__color_backend_stack_int=\count278
+\l__pdf_internal_box=\box53
+) (DPR_Phase1_Deployed.aux)
+\openout1 = `DPR_Phase1_Deployed.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -357,12 +308,12 @@ LaTeX Font Info:    ... okay on input line 37.
 * \topmargin=-37.0pt
 * \headheight=12.0pt
 * \headsep=25.0pt
-* \topskip=12.0pt
+* \topskip=11.0pt
 * \footskip=30.0pt
-* \marginparwidth=35.0pt
+* \marginparwidth=50.0pt
 * \marginparsep=10.0pt
 * \columnsep=10.0pt
-* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \skip\footins=10.0pt plus 4.0pt minus 2.0pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
 * \mag=1000
@@ -372,25 +323,26 @@ LaTeX Font Info:    ... okay on input line 37.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 37.
+Package hyperref Info: Link coloring OFF on input line 19.
+(DPR_Phase1_Deployed.out) (DPR_Phase1_Deployed.out)
 \@outlinefile=\write3
-\openout3 = `DPR_Full.out'.
+\openout3 = `DPR_Phase1_Deployed.out'.
 
 
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count288
-\scratchdimen=\dimen165
-\scratchbox=\box56
-\nofMPsegments=\count289
-\nofMParguments=\count290
-\everyMPshowfont=\toks25
-\MPscratchCnt=\count291
-\MPscratchDim=\dimen166
-\MPnumerator=\count292
-\makeMPintoPDFobject=\count293
-\everyMPtoPDFconversion=\toks26
+\scratchcounter=\count279
+\scratchdimen=\dimen161
+\scratchbox=\box54
+\nofMPsegments=\count280
+\nofMParguments=\count281
+\everyMPshowfont=\toks23
+\MPscratchCnt=\count282
+\MPscratchDim=\dimen162
+\MPnumerator=\count283
+\makeMPintoPDFobject=\count284
+\everyMPtoPDFconversion=\toks24
 )
 (C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
 ase.sty
@@ -402,207 +354,55 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-\c@lstlisting=\count294
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 22.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 22.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 22.
  [1
 
 {C:/Users/shivc/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-No file DPR_Full.toc.
-\tf@toc=\write4
-\openout4 = `DPR_Full.toc'.
+<../image/live_site.png, id=52, 1284.8pt x 803.0pt>
+File: ../image/live_site.png Graphic file (type png)
+<use ../image/live_site.png>
+Package pdftex.def Info: ../image/live_site.png  used on input line 57.
+(pdftex.def)             Requested size: 362.37569pt x 226.48033pt.
 
-
-pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
-been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.56 \newpage
-              [1
-
-]
-Chapter 1.
-
-Overfull \hbox (4.44954pt too wide) in paragraph at lines 59--60
-\T1/cmr/m/n/12 This re-port de-tails the ar-chi-tec-tural evo-lu-tion of \T1/cm
-r/m/it/12 Dubai Seven Won-ders\T1/cmr/m/n/12 , a high-performance
- []
-
-[2
-
-]
-Chapter 2.
-[3
-
-]
-Chapter 3.
-[4
-
-]
-Chapter 4.
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 9
-0.
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/base\t1cmtt.fd
-File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
-)
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
-File: lstlang1.sty 2023/02/27 1.9 listings language file
-)
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang2.sty
-File: lstlang2.sty 2023/02/27 1.9 listings language file
-)
-(C:\Users\shivc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang3.sty
-File: lstlang3.sty 2023/02/27 1.9 listings language file
-)
-
-! Package Listings Error: Couldn't load requested language.
-
-See the Listings package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.91 ...avaScript, caption=SHA-256 Implementation]
-                                                  
-The following languages weren't loadable:
-    ,javascript$
-This may cause errors in the sequel.
-
-
-! Package Listings Error: language javascript undefined.
-
-See the Listings package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.91 ...avaScript, caption=SHA-256 Implementation]
-                                                  
-The language is not loadable. Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 91.
-! Missing $ inserted.
-<inserted text> 
-                $
-l.99 ...n was added to the \texttt{gallery_images}
-                                                   table, indexed for $O(1)$...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 99.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 99.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 99.
-! Extra }, or forgotten $.
-<recently read> \egroup 
-                        
-l.99 ...n was added to the \texttt{gallery_images}
-                                                   table, indexed for $O(1)$...
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.100 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-
-Overfull \hbox (238.79106pt too wide) in paragraph at lines 99--100
-\T1/cmr/m/n/12 A \T1/cmtt/m/n/12 fingerprint \T1/cmr/m/n/12 col-umn was added t
-o the \T1/cmtt/m/n/12 gallery$[]\OML/cmm/m/it/12 magestable; indexedfor$\T1/cmt
-t/m/n/12 O(1)$\OML/cmm/m/it/12 lookupperformance:Thisensuresthatevenwith\OT1/cm
-r/m/n/12 100\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 000 +
- []
-
-[5
-
-]
-Chapter 5.
-LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 102.
-
-Overfull \hbox (22.39102pt too wide) in paragraph at lines 103--105
-\T1/cmtt/m/n/12 To solve the Netlify persistence issue, we propose a containeri
-zed migration.
- []
-
-LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 105.
-[6
-
-]
-Chapter 6.
-
-Overfull \hbox (47.08499pt too wide) in paragraph at lines 119--120
-\T1/cmtt/m/n/12 The Dubai Seven Wonders project demonstrates that luxury UX is 
-built on technical
- []
-
-
-Overfull \hbox (22.39102pt too wide) in paragraph at lines 119--120
-\T1/cmtt/m/n/12 discipline. By applying Design Thinking to the "unsexy" problem
- of duplicate
- []
-
-
-Overfull \hbox (47.08499pt too wide) in paragraph at lines 119--120
-\T1/cmtt/m/n/12 files, we achieved a 95% reduction in redundant storage and est
-ablished a roadmap
- []
-
-[7
-
-] (DPR_Full.aux)
+[2 <../image/live_site.png (PNG copy)>] (DPR_Phase1_Deployed.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
  ***********
 
 
-Package rerunfilecheck Warning: File `DPR_Full.out' has changed.
+Package rerunfilecheck Warning: File `DPR_Phase1_Deployed.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
 (rerunfilecheck)                or use package `bookmark'.
 
-Package rerunfilecheck Info: Checksums for `DPR_Full.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  85C1777B171515DC106DC71368C11EB3;2074.
- )
-(\end occurred inside a group at level 1)
-
-### simple group (level 1) entered at line 99 ({)
-### bottom level 
+Package rerunfilecheck Info: Checksums for `DPR_Phase1_Deployed.out':
+(rerunfilecheck)             Before: 0FD182403B3B55D6A3FCF61CBA80F1A3;1500
+(rerunfilecheck)             After:  28C6791C44DE23D75FB478898500DBED;1678.
+ ) 
 Here is how much of TeX's memory you used:
- 12255 strings out of 474486
- 188685 string characters out of 5743756
- 1932542 words of memory out of 5000000
- 34375 multiletter control sequences out of 15000+600000
- 568626 words of font info for 57 fonts, out of 8000000 for 9000
+ 10209 strings out of 474486
+ 159181 string characters out of 5743756
+ 1937542 words of memory out of 5000000
+ 32374 multiletter control sequences out of 15000+600000
+ 565995 words of font info for 53 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,5n,79p,456b,1018s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\shivc\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
-ec/dpi600\ectt1440.pk> <C:\Users\shivc\AppData\Local\MiKTeX\fonts/pk/ljfour/jkn
-appen/ec/dpi600\ectt1200.pk> <C:\Users\shivc\AppData\Local\MiKTeX\fonts/pk/ljfo
-ur/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\shivc\AppData\Local\MiKTeX\fonts/p
-k/ljfour/jknappen/ec/dpi600\tcrm1200.pk> <C:\Users\shivc\AppData\Local\MiKTeX\f
-onts/pk/ljfour/jknappen/ec/dpi600\ecti1200.pk> <C:\Users\shivc\AppData\Local\Mi
-KTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\shivc\AppData\Lo
-cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\shivc\AppD
-ata\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1440.pk> <C:\Users\shiv
-c\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1728.pk> <C:\User
-s\shivc\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2488.pk><C:
-/Users/shivc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi1
-2.pfb><C:/Users/shivc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
-/cm/cmmi8.pfb><C:/Users/shivc/AppData/Local/Programs/MiKTeX/fonts/type1/public/
-amsfonts/cm/cmr12.pfb>
-Output written on DPR_Full.pdf (8 pages, 171375 bytes).
+ 75i,6n,79p,405b,437s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\shivc\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti
+1095.pk> <C:\Users\shivc\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
+0\ecbx1095.pk> <C:\Users\shivc\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec
+/dpi600\tcrm1095.pk> <C:\Users\shivc\AppData\Local\MiKTeX\fonts/pk/ljfour/jknap
+pen/ec/dpi600\ecrm1095.pk> <C:\Users\shivc\AppData\Local\MiKTeX\fonts/pk/ljfour
+/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\shivc\AppData\Local\MiKTeX\fonts/pk/
+ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\shivc\AppData\Local\MiKTeX\fon
+ts/pk/ljfour/jknappen/ec/dpi600\ecrm1728.pk>
+Output written on DPR_Phase1_Deployed.pdf (2 pages, 102096 bytes).
 PDF statistics:
- 460 PDF objects out of 1000 (max. 8388607)
- 32 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 318 PDF objects out of 1000 (max. 8388607)
+ 16 named destinations out of 1000 (max. 500000)
+ 78 words of extra memory for PDF output out of 10000 (max. 10000000)
 

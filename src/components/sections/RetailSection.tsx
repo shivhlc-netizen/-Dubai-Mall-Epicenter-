@@ -260,9 +260,9 @@ export default function RetailSection({ onExploreLeasing }: { onExploreLeasing: 
 
                       {/* YoY growth */}
                       <div className="hidden md:flex items-center gap-1 flex-shrink-0 w-16">
-                        <TrendingUp size={10} className={shop.yoy_growth >= 10 ? 'text-green-400' : 'text-white/30'}/>
-                        <span className={`text-xs font-mono ${shop.yoy_growth >= 10 ? 'text-green-400' : 'text-white/40'}`}>
-                          +{shop.yoy_growth.toFixed(1)}%
+                        <TrendingUp size={10} className={(shop.yoy_growth || 0) >= 10 ? 'text-green-400' : 'text-white/30'}/>
+                        <span className={`text-xs font-mono ${(shop.yoy_growth || 0) >= 10 ? 'text-green-400' : 'text-white/40'}`}>
+                          +{(shop.yoy_growth || 0).toFixed(1)}%
                         </span>
                       </div>
 
