@@ -78,17 +78,18 @@ export default function HeroSection({ onScrollDown, isManaging = false, onToggle
 
   return (
     <section id="hero" className="snap-section relative flex flex-col justify-center items-center overflow-hidden">
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <Image
-          src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&q=85"
-          alt="Dubai skyline"
-          fill
-          priority
-          className="object-cover object-center opacity-25"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/60 via-[#050505]/40 to-[#050505]" />
+      {/* Background Cinematic Video */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover opacity-40 scale-105"
+        >
+          <source src="https://player.vimeo.com/external/494196147.hd.mp4?s=6a3b2b9c78f141829e71c6964177265a2010c25a&profile_id=175" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/80 via-[#050505]/40 to-[#050505]" />
       </div>
 
       {/* Cinematic Counter Bottom Right */}
