@@ -39,10 +39,7 @@
 [functions."refresh-pulse-cache"]
   schedule = "0 */6 * * *"        # Every 6 hours
 
-# ─── Edge Functions ───────────────────────────────────────────────────────────
-[edge_functions]
-  directory = "netlify/edge-functions"
-
+# ─── Edge Functions (directory auto-detected as netlify/edge-functions/) ─────
 [[edge_functions]]
   function = "geo-welcome"
   path = "/"
