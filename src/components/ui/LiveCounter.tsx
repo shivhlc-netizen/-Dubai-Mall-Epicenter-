@@ -28,7 +28,7 @@ export default function LiveCounter() {
     };
 
     fetchStats();
-    const interval = setInterval(fetchStats, 30000); // Update every 30s
+    const interval = setInterval(fetchStats, 150000); // Conservative refresh (2.5 min)
     return () => clearInterval(interval);
   }, []);
 
