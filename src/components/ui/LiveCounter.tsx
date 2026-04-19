@@ -28,8 +28,6 @@ export default function LiveCounter() {
     };
 
     fetchStats();
-    const interval = setInterval(fetchStats, 150000); // Conservative refresh (2.5 min)
-    return () => clearInterval(interval);
   }, []);
 
   return (

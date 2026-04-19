@@ -35,8 +35,6 @@ export default function VibgyorCounter() {
   useEffect(() => {
     setHasMounted(true);
     fetchCount();
-    const interval = setInterval(fetchCount, 120000); // Conservative refresh (2 min)
-    return () => clearInterval(interval);
   }, []);
 
   if (!hasMounted) return (

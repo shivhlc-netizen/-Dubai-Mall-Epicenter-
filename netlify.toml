@@ -22,22 +22,22 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# v1 Scheduled Functions (existing)
+# v1 Scheduled Functions
 [functions."cron-gemini-pulse"]
-  schedule = "0 0 * * 2,5"        # Tuesday + Friday midnight UTC
+  schedule = "0 0 * * 0"           # Sunday midnight UTC
 
 [functions."resilient-automation"]
-  schedule = "@daily"              # Every day midnight UTC
+  schedule = "0 0 * * 0"           # Sunday midnight UTC
 
-# v2 Scheduled Functions (new)
+# v2 Scheduled Functions
 [functions."send-weekly-digest"]
-  schedule = "0 9 * * 1"          # Monday 9am UTC
+  schedule = "0 9 * * 0"           # Sunday 9am UTC
 
 [functions."cleanup-expired-tokens"]
-  schedule = "0 2 * * *"          # Daily 2am UTC
+  schedule = "0 2 * * 0"           # Sunday 2am UTC
 
 [functions."refresh-pulse-cache"]
-  schedule = "0 */6 * * *"        # Every 6 hours
+  schedule = "0 3 * * 0"           # Sunday 3am UTC
 
 # ─── Edge Functions (directory auto-detected as netlify/edge-functions/) ─────
 [[edge_functions]]
