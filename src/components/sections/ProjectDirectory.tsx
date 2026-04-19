@@ -79,6 +79,7 @@ export default function ProjectDirectory() {
                   src={dir.image} 
                   alt={dir.title} 
                   fill 
+                  priority={idx < 4}
                   className="object-cover opacity-40 group-hover:opacity-60 grayscale group-hover:grayscale-0 transition-all duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent" />

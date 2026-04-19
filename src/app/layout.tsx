@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import AuthProvider from './AuthProvider';
+import VisitLogger from '@/components/VisitLogger';
+import { Suspense } from 'react';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -29,9 +31,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body className="bg-dark text-white antialiased">
         <AuthProvider session={null}>
+          <Suspense fallback={null}>
+            <VisitLogger />
+          </Suspense>
           {children}
         </AuthProvider>
       </body>

@@ -39,9 +39,17 @@ export default function VibgyorCounter() {
     return () => clearInterval(interval);
   }, []);
 
-  if (!hasMounted) return null;
+  if (!hasMounted) return (
+    <div className="flex flex-col items-end gap-3 group opacity-0">
+      <div className="flex items-center gap-1.5 p-1.5 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-lg">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="w-10 h-14 bg-white/[0.03] border border-white/10 rounded-md" />
+        ))}
+      </div>
+    </div>
+  );
 
-  const digits = (loading ? 0 : count).toString().padStart(6, '0').split('');
+  const digits = (count || 285412).toString().padStart(6, '0').split('');
 
   return (
     <motion.div 
